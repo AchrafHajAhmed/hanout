@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "933084221712",
+    "project_id": "hanout-a372e",
+    "storage_bucket": "hanout-a372e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:933084221712:android:2683898f417ab0186a5595",
+        "android_client_info": {
+          "package_name": "com.example.hanout"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_EVOLj6vIZTJ8cThFfyk7gKl6MEWhOTU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
