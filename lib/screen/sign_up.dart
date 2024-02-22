@@ -1,95 +1,111 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hanout/screen/log_in.dart';
 
-class SignUpPage extends StatefulWidget {
-  const SignUpPage({Key? key}) : super(key: key);
-
+class SignUp extends StatefulWidget {
   @override
-  SignUpPageState createState() => SignUpPageState();
+  _SignUpState createState() => _SignUpState();
 }
 
-class SignUpPageState extends State<SignUpPage> {
-  final _formKey = GlobalKey<FormState>();
-  String _username = '';
-  String _email = '';
-  String _password = '';
+class _SignUpState extends State<SignUp> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String? _email, _password, _name, _confirmPassword;
+  final TextEditingController _passwordController = TextEditingController();
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      FirebaseFirestore.instance.collection('users').add({
-        'username': _username,
-        'email': _email,
-        // Ne stockez pas de mots de passe en clair dans une base de données réelle.
-        'password': _password,
-      }).then((value) {
-        print('Utilisateur enregistré avec succès');
-        // Ici, vous pouvez naviguer vers une autre page ou afficher un message de succès
-      }).catchError((error) {
-        print('Erreur lors de l\'enregistrement de l\'utilisateur: $error');
-        // Gérer l'erreur, par exemple, en affichant un message d'erreur à l'utilisateur
-      });
-    }
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Inscription'),
+        title: Text('Sign Up'),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: SingleChildScrollView( // Ajouté pour gérer le débordement lorsque le clavier apparaît
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Nom d\'utilisateur'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer votre nom d\'utilisateur';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) => _username = value,
+          child: Column(
+            children: <Widget>[
+              TextFormField(
+                validator: (input) => input == null || input.isEmpty ? 'Please enter your name' : null,
+                onSaved: (input) => _name = input,
+                decoration: InputDecoration(
+                  labelText: 'Name',
                 ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Email'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer votre email';
-                    } else if (!value.contains('@')) {
-                      return 'Veuillez entrer un email valide';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) => _email = value,
+              ),
+              TextFormField(
+                validator: (input) => input == null || input.isEmpty ? 'Please enter an email' : null,
+                onSaved: (input) => _email = input,
+                decoration: InputDecoration(
+                  labelText: 'Email',
                 ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Mot de passe'),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer votre mot de passe';
-                    } else if (value.length < 6) {
-                      return 'Le mot de passe doit contenir au moins 6 caractères';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) => _password = value,
+              ),
+              TextFormField(
+                controller: _passwordController,
+                validator: (input) => input == null || input.length < 6 ? 'Your password needs to be at least 6 characters' : null,
+                onSaved: (input) => _password = input,
+                decoration: InputDecoration(
+                  labelText: 'Password',
                 ),
-                SizedBox(height: 20), // Ajout d'espace pour une meilleure lisibilité
-                ElevatedButton(
-                  onPressed: _submitForm,
-                  child: Text('S\'inscrire'),
+                obscureText: true,
+              ),
+              TextFormField(
+                validator: (input) => input != _passwordController.text ? 'Passwords do not match' : null,
+                onSaved: (input) => _confirmPassword = input,
+                decoration: InputDecoration(
+                  labelText: 'Confirm Password',
                 ),
-              ],
-            ),
+                obscureText: true,
+              ),
+              SizedBox(height: 20), // Added SizedBox for spacing
+              ElevatedButton(
+                onPressed: signUp,
+                child: Text('Sign Up'),
+              ),
+              SizedBox(height: 20), // Additional spacing before the "Log In" button
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Log_in()));
+                },
+                child: Text('Log In'),
+              ),
+            ],
           ),
         ),
       ),
     );
+  }
+
+  void signUp() async {
+    if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      try {
+        UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+          email: _email!,
+          password: _password!,
+        );
+
+        String userUid = userCredential.user!.uid;
+
+        await _firestore.collection('users').doc(userUid).set({
+          'uid': userUid,
+          'name': _name!,
+          'email': _email!,
+        });
+
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Log_in()));
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
+    }
   }
 }
