@@ -46,18 +46,13 @@ android {
         applicationId "com.example.hanout"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-<<<<<<< HEAD
-        minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
-=======
+
         minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
->>>>>>> e14d473dab28738285da2e60839fd02f21b4f743
+
     }
 
     buildTypes {
@@ -74,11 +69,9 @@ flutter {
 }
 
 dependencies {
-<<<<<<< HEAD
-    implementation(platform("com.google.firebase:firebase-bom:32.7.2"))
-=======
+
     implementation 'com.android.support:multidex:2.0.1'
     implementation platform('com.google.firebase:firebase-bom:30.2.0')
     implementation 'com.google.firebase:firebase-analytics'
->>>>>>> e14d473dab28738285da2e60839fd02f21b4f743
+
 }
