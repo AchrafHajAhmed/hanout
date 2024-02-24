@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hanout/screen/log_in.dart';
+import 'package:hanout/widget/textfromfield.dart';
 
 class SignUp extends StatefulWidget {
   @override
