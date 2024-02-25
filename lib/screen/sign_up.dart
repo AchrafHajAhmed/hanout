@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hanout/screen/log_in.dart';
-import 'package:hanout/widget/textfromfield.dart';
+
 
 class SignUp extends StatefulWidget {
   @override
@@ -65,12 +65,12 @@ class _SignUpState extends State<SignUp> {
                 ),
                 obscureText: true,
               ),
-              SizedBox(height: 20), // Added SizedBox for spacing
+              SizedBox(height: 20),
               ElevatedButton(
                 onPressed: signUp,
                 child: Text('Sign Up'),
               ),
-              SizedBox(height: 20), // Additional spacing before the "Log In" button
+              SizedBox(height: 20),
               TextButton(
                 onPressed: () {
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Log_in()));
