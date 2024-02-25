@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hanout/screen/log_in.dart';
+import 'package:hanout/widget/textbutton.dart';
 
 
 class SignUp extends StatefulWidget {
@@ -70,13 +71,11 @@ class _SignUpState extends State<SignUp> {
                 onPressed: signUp,
                 child: Text('Sign Up'),
               ),
-              SizedBox(height: 20),
-              TextButton(
+              textbutton(buttonText: 'Log in',
                 onPressed: () {
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Log_in()));
                 },
-                child: Text('Log In'),
-              ),
+              )
             ],
           ),
         ),

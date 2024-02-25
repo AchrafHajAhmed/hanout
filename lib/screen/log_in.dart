@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hanout/screen/acceuil.dart';
 import 'package:hanout/screen/sign_up.dart';
+import 'package:hanout/widget/textfromfield.dart';
+import 'package:hanout/widget/textbutton.dart';
 
 class Log_in extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -49,12 +51,11 @@ class Log_in extends StatelessWidget {
               },
               child: Text('Se connecter'),
             ),
-            SizedBox(height: 20),
-            TextButton(
+            textbutton(buttonText: 'Sign Up',
                 onPressed: () {
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignUp()));
-                },
-                child: Text('Sign Up')),
+      },
+            )
           ],
         ),
       ),
