@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hanout/screen/log_in.dart';
 import 'package:hanout/widget/textbutton.dart';
-
+import 'package:hanout/auth.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -11,8 +9,7 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final auth _auth = auth();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String? _email, _password, _name, _confirmPassword;
   final TextEditingController _passwordController = TextEditingController();
@@ -87,19 +84,12 @@ class _SignUpState extends State<SignUp> {
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       try {
-        UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-          email: _email!,
-          password: _password!,
+        var userCredential = await _auth.createUserWithEmailAndPassword(
+         _email!,
+         _password!,
         );
-
         String userUid = userCredential.user!.uid;
-
-        await _firestore.collection('users').doc(userUid).set({
-          'uid': userUid,
-          'name': _name!,
-          'email': _email!,
-        });
-
+        await _auth.addUserToFirestore(userUid, _name!, _email!);
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Log_in()));
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(

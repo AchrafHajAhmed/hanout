@@ -4,10 +4,13 @@ import 'package:hanout/screen/acceuil.dart';
 import 'package:hanout/screen/sign_up.dart';
 import 'package:hanout/widget/textfromfield.dart';
 import 'package:hanout/widget/textbutton.dart';
+import 'package:hanout/auth.dart';
 
 class Log_in extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final auth _auth = auth();
+
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +39,10 @@ class Log_in extends StatelessWidget {
             ElevatedButton(
               onPressed: () async {
                 try {
-                  UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-                    email: emailController.text,
-                    password: passwordController.text,
+                  await _auth.signInWithEmailAndPassword(
+                    emailController.text,
+                    passwordController.text,
                   );
-                  User? user = userCredential.user;
-                  print('User signed in: $user');
-
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => acceuil()));
                 } catch (e) {
                   print('Error signing in: $e');
