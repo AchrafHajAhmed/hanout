@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hanout/screen/acceuil.dart';
 import 'package:hanout/screen/sign_up.dart';
-import 'package:hanout/widget/textfromfield.dart';
-import 'package:hanout/widget/textbutton.dart';
+import 'package:hanout/widget/text_form_field.dart';
+import 'package:hanout/widget/text_button.dart';
 import 'package:hanout/auth.dart';
 
 class Log_in extends StatelessWidget {
@@ -11,31 +10,26 @@ class Log_in extends StatelessWidget {
   final TextEditingController passwordController = TextEditingController();
   final auth _auth = auth();
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Connexion'),
       ),
-      body: SingleChildScrollView( 
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
+            MyTextFormField(
+              labelText: 'Email',
               controller: emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-              ),
             ),
-            TextField(
+            MyTextFormField(
+              labelText: 'Mot de passe',
               controller: passwordController,
-              decoration: InputDecoration(
-                labelText: 'Mot de passe',
-              ),
               obscureText: true,
             ),
-            SizedBox(height: 20), 
+            SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
                 try {
@@ -43,18 +37,26 @@ class Log_in extends StatelessWidget {
                     emailController.text,
                     passwordController.text,
                   );
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => acceuil()));
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => acceuil()));
                 } catch (e) {
                   print('Error signing in: $e');
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur de connexion')));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Erreur de connexion')));
                 }
               },
               child: Text('Se connecter'),
             ),
-            textbutton(buttonText: 'Sign Up',
-                onPressed: () {
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignUp()));
-      },
+            MyTextButton(
+              buttonText: 'Sign Up',
+              onPressed: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SignUp()));
+              },
             )
           ],
         ),
