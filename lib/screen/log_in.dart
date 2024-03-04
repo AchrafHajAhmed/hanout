@@ -4,6 +4,7 @@ import 'package:hanout/screen/sign_up.dart';
 import 'package:hanout/widget/text_form_field.dart';
 import 'package:hanout/widget/text_button.dart';
 import 'package:hanout/auth.dart';
+import 'package:hanout/widget/elevated_button.dart';
 
 class Log_in extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -30,8 +31,8 @@ class Log_in extends StatelessWidget {
               obscureText: true,
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
+            MyElevatedButton(elevatedbutton: 'Log In', onPressed:
+                () async {
                 try {
                   await _auth.signInWithEmailAndPassword(
                     emailController.text,
@@ -47,7 +48,6 @@ class Log_in extends StatelessWidget {
                       SnackBar(content: Text('Erreur de connexion')));
                 }
               },
-              child: Text('Se connecter'),
             ),
             MyTextButton(
               buttonText: 'Sign Up',

@@ -3,6 +3,7 @@ import 'package:hanout/screen/log_in.dart';
 import 'package:hanout/widget/text_button.dart';
 import 'package:hanout/auth.dart';
 import 'package:hanout/widget/text_form_field.dart';
+import 'package:hanout/widget/elevated_button.dart';
 
 
 class SignUp extends StatefulWidget {
@@ -61,11 +62,7 @@ class _SignUpState extends State<SignUp> {
                 input != _passwordController.text ? 'Passwords do not match' : null,
                 obscureText: true,
               ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: signUp,
-                child: Text('Sign Up'),
-              ),
+              MyElevatedButton(elevatedbutton: 'Sign Up', onPressed: SignUp ),
               MyTextButton(
                 buttonText: 'Log in',
                 onPressed: () {
@@ -82,7 +79,7 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  void signUp() async {
+  void SignUp() async {
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       try {
