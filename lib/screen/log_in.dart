@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hanout/screen/acceuil.dart';
 import 'package:hanout/screen/sign_up.dart';
+import 'package:hanout/widget/text_form_field.dart';
+import 'package:hanout/widget/text_button.dart';
+import 'package:hanout/auth.dart';
+import 'package:hanout/widget/elevated_button.dart';
 
 class Log_in extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final auth _auth = auth();
 
   @override
   Widget build(BuildContext context) {
@@ -13,48 +17,47 @@ class Log_in extends StatelessWidget {
       appBar: AppBar(
         title: Text('Connexion'),
       ),
-      body: SingleChildScrollView( 
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
+            MyTextFormField(
+              labelText: 'Email',
               controller: emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-              ),
             ),
-            TextField(
+            MyTextFormField(
+              labelText: 'Mot de passe',
               controller: passwordController,
-              decoration: InputDecoration(
-                labelText: 'Mot de passe',
-              ),
               obscureText: true,
             ),
-            SizedBox(height: 20), 
-            ElevatedButton(
-              onPressed: () async {
+            SizedBox(height: 20),
+            MyElevatedButton(elevatedbutton: 'Log In', onPressed:
+                () async {
                 try {
-                  UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-                    email: emailController.text,
-                    password: passwordController.text,
+                  await _auth.signInWithEmailAndPassword(
+                    emailController.text,
+                    passwordController.text,
                   );
-                  User? user = userCredential.user;
-                  print('User signed in: $user');
-
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => acceuil()));
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => acceuil()));
                 } catch (e) {
                   print('Error signing in: $e');
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur de connexion')));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Erreur de connexion')));
                 }
               },
-              child: Text('Se connecter'),
             ),
-            SizedBox(height: 20),
-            TextButton(
-                onPressed: () {
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignUp()));
-                },
-                child: Text('Sign Up')),
+            MyTextButton(
+              buttonText: 'Sign Up',
+              onPressed: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SignUp()));
+              },
+            )
           ],
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'screen/sign_up.dart';
 import 'screen/acceuil.dart';
 import 'screen/log_in.dart';
+import 'screen/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,11 +15,11 @@ void main() async {
       projectId: 'hanout-a372e',
     ),
   );
-  runApp(SignUpApp());
+  runApp(splashscreenApp());
 }
 
 
-class SignUpApp extends StatelessWidget {
+class splashscreenApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,7 +27,7 @@ class SignUpApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: SignUp(),
+      home: splashscreen(),
     );
   }
 }
