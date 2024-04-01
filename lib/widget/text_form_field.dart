@@ -21,18 +21,20 @@ class MyTextFormField extends StatefulWidget {
 }
 
 class _MyTextFormFieldState extends State<MyTextFormField> {
-  late TextEditingController _textEditingController;
+  late final TextEditingController _controller;
+  late bool _isObscured;
 
   @override
   void initState() {
     super.initState();
-    _textEditingController = widget.controller ?? TextEditingController();
+    _controller = widget.controller ?? TextEditingController();
+    _isObscured = widget.obscureText;
   }
 
   @override
   void dispose() {
     if (widget.controller == null) {
-      _textEditingController.dispose();
+      _controller.dispose();
     }
     super.dispose();
   }
@@ -40,13 +42,24 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: _textEditingController,
+      controller: _controller,
+      obscureText: _isObscured,
       validator: widget.validator,
       onSaved: widget.onSaved,
       decoration: InputDecoration(
         labelText: widget.labelText,
+        suffixIcon: widget.obscureText ? IconButton(
+          icon: Icon(
+            _isObscured ? Icons.visibility : Icons.visibility_off,
+          ),
+          onPressed: () {
+            setState(() {
+              _isObscured = !_isObscured;
+            });
+          },
+        ) : null,
       ),
-      obscureText: widget.obscureText,
     );
   }
 }
+

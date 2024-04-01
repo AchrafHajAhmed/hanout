@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hanout/screen/log_in.dart';
+import 'package:hanout/screen/authentification/log_in.dart';
 import 'package:hanout/widget/text_button.dart';
-import 'package:hanout/auth.dart';
+import 'package:hanout/screen/services/auth.dart';
 import 'package:hanout/widget/text_form_field.dart';
 import 'package:hanout/widget/elevated_button.dart';
-
+import 'package:hanout/screen/acceuil.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -12,10 +12,32 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  final auth _auth = auth();
+  final Auth _auth = Auth();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String? _email, _password, _name, _confirmPassword;
   final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+  bool? isChecked = false;
+
+  void _signInWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      final userCredential = await _auth.signInWithGoogle();
+      if (userCredential != null) {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Google Sign-In cancelled')));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error signing in with Google: $e')));
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -35,6 +57,7 @@ class _SignUpState extends State<SignUp> {
           key: _formKey,
           child: Column(
             children: <Widget>[
+              Image.asset('assets/eee.png'),
               MyTextFormField(
                 labelText: 'Name',
                 onSaved: (input) => _name = input,
@@ -62,16 +85,38 @@ class _SignUpState extends State<SignUp> {
                 input != _passwordController.text ? 'Passwords do not match' : null,
                 obscureText: true,
               ),
+              Checkbox(value: isChecked,
+                  activeColor: Colors.blueAccent,
+                  tristate: true,
+                  onChanged: (newBool){
+                setState(() {
+                  isChecked = newBool;
+                });
+                  }
+              ),
+              SizedBox(height: 20),
               MyElevatedButton(elevatedbutton: 'Sign Up', onPressed: SignUp ),
               MyTextButton(
                 buttonText: 'Log in',
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => Log_in()),
+                    MaterialPageRoute(builder: (context) => LogIn()),
                   );
                 },
-              )
+              ),
+              InkWell(
+                onTap: _signInWithGoogle,
+                child: Padding(
+                  padding: EdgeInsets.all(1.0),
+                  child: SizedBox(
+                    width: 100,
+                    height: 50,
+                    child: Image.asset('assets/google.png'),
+                  ),
+                ),
+              ),
+
             ],
           ),
         ),
@@ -89,7 +134,7 @@ class _SignUpState extends State<SignUp> {
         );
         String userUid = userCredential.user!.uid;
         await _auth.addUserToFirestore(userUid, _name!, _email!);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Log_in()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LogIn()));
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.toString())),

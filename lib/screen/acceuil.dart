@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hanout/color.dart';
 
-class acceuil extends StatefulWidget {
-  const acceuil({Key? key}) : super(key: key);
+class Acceuil extends StatefulWidget {
+  const Acceuil({Key? key}) : super(key: key);
 
   @override
-  _acceuilState createState() => _acceuilState();
+  _AcceuilState createState() => _AcceuilState();
 }
 
-class _acceuilState extends State<acceuil> {
+class _AcceuilState extends State<Acceuil> {
   String? _username;
 
   @override
@@ -36,14 +37,16 @@ class _acceuilState extends State<acceuil> {
       appBar: AppBar(
         title: Text('acceuil'),
       ),
-      body: Center(
-        child: Padding(
+      body:
+      Center(
+        child: Container(
           padding: EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               if (_username != null)
                 Text('Bonjour, $_username '),
+
               SizedBox(height: 20.0),
 
             ],
