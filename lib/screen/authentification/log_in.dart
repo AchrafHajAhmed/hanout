@@ -66,6 +66,13 @@ class _SignInState extends State<SignIn> {
                 },
               ),
             ),
+    Text('OR',
+    style: TextStyle(color: Color(0xFF757373),
+    fontFamily: 'Roboto',
+    fontWeight: FontWeight.w900,
+    fontSize: 16.0,
+    ),
+    textAlign: TextAlign.center),
             SizedBox(height: 20),
             const Row(
               children: <Widget>[
@@ -79,14 +86,8 @@ class _SignInState extends State<SignIn> {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child:
 
-                  Text('OR',
-                      style: TextStyle(color: Color(0xFF757373),
-                        fontFamily: 'Roboto',
-                        fontWeight: FontWeight.w900,
-                        fontSize: 16.0,
-                      ),
-                      textAlign: TextAlign.center),),
-                Expanded(
+                      Text('Sign In Using')),
+                  Expanded(
                   child: Divider(
                     thickness: 1,
                     color: Colors.grey,
@@ -95,7 +96,6 @@ class _SignInState extends State<SignIn> {
               ],
             ),
             SizedBox(height: 25,),
-            Text('Sign In Using'),
             SizedBox(height: 25),
             Row(
               mainAxisAlignment: MainAxisAlignment.center, // Centre les boutons sur la ligne
@@ -115,8 +115,9 @@ class _SignInState extends State<SignIn> {
                       _isLoading = false;
                     });
                   },
-                  child: Image.asset('assets/logo.png', height: 50),
+                  child: Image.asset('assets/facebook.png', height: 50),
                 ),
+                const SizedBox(width: 10,),
                 GestureDetector(
                   onTap: () async {
                     setState(() {

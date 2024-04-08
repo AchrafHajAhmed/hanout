@@ -112,6 +112,7 @@ class _SignUpState extends State<SignUp> {
                   checkColor: Colors.white,
                   activeColor: Colors.black,
                 ),
+                SizedBox(height: 20,),
                 const Expanded(
                   child: Text(
                     'Yes, I want to receive discounts, loyalty offers and other updates.',
@@ -121,6 +122,36 @@ class _SignUpState extends State<SignUp> {
                 ),
               ],
             ),
+              SizedBox(height: 25),
+              Text('OR',
+                  style: TextStyle(color: Color(0xFF757373),
+                    fontFamily: 'Roboto',
+                    fontWeight: FontWeight.w900,
+                    fontSize: 16.0,
+                  ),
+                  textAlign: TextAlign.center),
+              SizedBox(height: 25),
+              const Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Divider(
+                      thickness: 1,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child:
+
+                      Text('Sign Up Using')),
+                  Expanded(
+                    child: Divider(
+                      thickness: 1,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
               SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -140,9 +171,9 @@ class _SignUpState extends State<SignUp> {
                         _isLoading = false;
                       });
                     },
-                    child: Image.asset('assets/logo.png', height: 50),
+                    child: Image.asset('assets/facebook.png', height: 50),
                   ),
-                  const SizedBox(height: 25,),
+                  const SizedBox(width: 10,),
                   GestureDetector(
                     onTap: () async {
                       setState(() {
@@ -162,6 +193,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ],
               ),
+              SizedBox(height: 30,),
               MyElevatedButton(
                 buttonText: 'Sign Up',
                 onPressed: () async {
@@ -171,7 +203,7 @@ class _SignUpState extends State<SignUp> {
               Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Need An Account? '),
+                    Text('Already have an account?'),
                     MyTextButton(
                       buttonText:'Sign In',
                       onPressed: () {
