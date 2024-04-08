@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hanout/color.dart';
 
 class MyTextFormField extends StatefulWidget {
-  final String labelText;
+  final String hintText;
   final TextEditingController? controller;
   final FormFieldValidator<String>? validator;
   final ValueChanged<String?>? onSaved;
@@ -9,7 +10,7 @@ class MyTextFormField extends StatefulWidget {
 
   const MyTextFormField({
     Key? key,
-    required this.labelText,
+    required this.hintText,
     this.controller,
     this.validator,
     this.onSaved,
@@ -41,13 +42,20 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
 
   @override
   Widget build(BuildContext context) {
+    crossAxisAlignment: CrossAxisAlignment.start;
     return TextFormField(
       controller: _controller,
       obscureText: _isObscured,
       validator: widget.validator,
       onSaved: widget.onSaved,
+      style: const TextStyle(
+          fontFamily: 'Roboto',
+          fontWeight: FontWeight.w900,
+          fontSize: 16.0,),
+
       decoration: InputDecoration(
-        labelText: widget.labelText,
+        hintText: widget.hintText,
+        border: OutlineInputBorder(),
         suffixIcon: widget.obscureText ? IconButton(
           icon: Icon(
             _isObscured ? Icons.visibility : Icons.visibility_off,
@@ -62,4 +70,3 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
     );
   }
 }
-

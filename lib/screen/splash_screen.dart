@@ -22,7 +22,7 @@ class _splashscreenState extends State<splashscreen> with SingleTickerProviderSt
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     Future.delayed(const Duration(seconds: 5), () {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => LogIn()),
+        MaterialPageRoute(builder: (_) => SignIn()),
       );
     });
   }
@@ -40,7 +40,7 @@ class _splashscreenState extends State<splashscreen> with SingleTickerProviderSt
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Center(
-              child: Image.asset('assets/eee.png'),
+              child: Image.asset('assets/logo.png'),
             ),
           ],
         ),
