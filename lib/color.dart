@@ -5,7 +5,7 @@ class AppColors {
   static const Color secondaryColor = Color (0xFFEF3F3F);
   static const Color thirdColor = Color (0xFF000000);
   static const Color TextColor = Color (0xFF757373);
-  static const Color ButtonColor = Color (0xFF757373);
+  static const Color ButtonColor = Color (0xFFF7E034);
 
 
 

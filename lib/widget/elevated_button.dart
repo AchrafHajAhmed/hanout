@@ -24,7 +24,6 @@ class MyElevatedButton extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: Colors.blue,
         borderRadius: BorderRadius.circular(borderRadius),
         border: Border.all(
           color: AppColors.ButtonColor,
