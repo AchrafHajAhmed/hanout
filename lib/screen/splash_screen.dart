@@ -1,20 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hanout/main.dart';
-import 'package:hanout/screen/authentification/log_in.dart';
-import 'package:hanout/screen/authentification/sign_up.dart';
 import 'package:hanout/color.dart';
-import 'package:hanout/screen/acceuil.dart';
+import 'package:hanout/screen/authentification/log_in.dart';
 
-class splashscreen extends StatefulWidget {
-  const splashscreen({Key? key}) : super(key: key);
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
-  State<splashscreen> createState() => _splashscreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _splashscreenState extends State<splashscreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {

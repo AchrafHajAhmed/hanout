@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hanout/color.dart';
 
 class MyTextButton extends StatelessWidget {
   final String buttonText;
@@ -11,7 +12,12 @@ class MyTextButton extends StatelessWidget {
        SizedBox(height: 20);
        return TextButton(
          onPressed: onPressed,
-         child: Text(buttonText),
+         child: Text(buttonText,
+           style: const TextStyle(
+             color: Color(0xFF808080),
+             fontFamily: 'Roboto',
+             fontWeight: FontWeight.w900,
+             fontSize: 12.0,),),
     );
   }
 }

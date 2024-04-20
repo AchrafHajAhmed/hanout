@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hanout/color.dart';
 
 class MyTextFormField extends StatefulWidget {
   final String hintText;
@@ -42,23 +41,30 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
 
   @override
   Widget build(BuildContext context) {
-    crossAxisAlignment: CrossAxisAlignment.start;
     return TextFormField(
       controller: _controller,
       obscureText: _isObscured,
       validator: widget.validator,
       onSaved: widget.onSaved,
       style: const TextStyle(
+        fontFamily: 'Roboto',
+        fontWeight: FontWeight.w900,
+        fontSize: 16.0,
+      ),
+      decoration: InputDecoration(
+        hintText: widget.hintText,
+        hintStyle: TextStyle(color: Color(0xFFBDBDBD),
           fontFamily: 'Roboto',
           fontWeight: FontWeight.w900,
           fontSize: 16.0,),
-
-      decoration: InputDecoration(
-        hintText: widget.hintText,
-        border: OutlineInputBorder(),
+        filled: true,
+        fillColor: Color(0xFFF6F6F6),
+        border:  OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
         suffixIcon: widget.obscureText ? IconButton(
           icon: Icon(
-            _isObscured ? Icons.visibility : Icons.visibility_off,
+            _isObscured ? Icons.visibility_off : Icons.visibility,
           ),
           onPressed: () {
             setState(() {
@@ -70,3 +76,4 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
     );
   }
 }
+
