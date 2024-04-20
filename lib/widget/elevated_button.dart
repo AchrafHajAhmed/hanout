@@ -12,7 +12,7 @@ class MyElevatedButton extends StatelessWidget {
   MyElevatedButton({
     required this.buttonText,
     required this.onPressed,
-    this.width = double.infinity,
+    this.width = 330.0,
     this.height = 50.0,
     this.borderRadius = 8.0,
     this.textColor = Colors.white,
@@ -31,6 +31,7 @@ class MyElevatedButton extends StatelessWidget {
         ),
       ),
       child: ElevatedButton(
+
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           shadowColor: Colors.transparent,

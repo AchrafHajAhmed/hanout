@@ -32,6 +32,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  collection: ^1.15.0
+
 
   firebase_core: ^2.24.0
   firebase_auth: ^4.15.0
@@ -44,6 +46,15 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_sign_in: ^6.2.1
   flutter_facebook_auth: ^6.1.1
+  square_in_app_payments: ^1.7.8
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.1
+  google_maps_flutter: ^2.6.0
+  location: ^6.0.1
+  geolocator: ^11.0.0
+  geocoding: ^3.0.0
+  firebase_database: ^10.5.2
+
 
 dev_dependencies:
   flutter_test:
@@ -72,9 +83,10 @@ flutter:
    - assets/logo.png
    - assets/google.png
    - assets/facebook.png
+   - assets/Roboto-Black.ttf
 
 
-     # An image asset can refer to one or more resolution-specific "variants", see
+    # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
   # For details regarding adding assets from package dependencies, see
@@ -88,6 +100,10 @@ flutter:
 
   #fonts:
     #- family: Roboto
+      #fonts:
+        #- assets: assets/Roboto-Regular.ttf
+
+      #- family: Roboto
      # fonts:
       #  - asset: assets/fonts/Roboto/Roboto-Regular.ttf
 

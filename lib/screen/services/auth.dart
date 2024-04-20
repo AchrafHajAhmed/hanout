@@ -83,5 +83,11 @@ class Auth {
     await FacebookAuth.instance.logOut();
     await _firebaseAuth.signOut();
   }
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      throw Exception('Erreur Firebase: ${e.message}');
+    }
+  }
 }
-

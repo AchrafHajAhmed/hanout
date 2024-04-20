@@ -5,8 +5,9 @@ import 'package:hanout/screen/authentification/sign_up.dart';
 import 'package:hanout/widget/text_form_field.dart';
 import 'package:hanout/widget/elevated_button.dart';
 import 'package:hanout/widget/text_button.dart';
-import 'package:hanout/color.dart';
 import 'package:hanout/screen/services/auth.dart';
+import 'package:hanout/screen/Rest_Password.dart';
+import 'package:hanout/screen/Localisation.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -63,16 +64,17 @@ class _SignInState extends State<SignIn> {
               child: MyTextButton(
                 buttonText: 'Forget Your Password?',
                 onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ResetPasswordPage()));
                 },
               ),
             ),
-    Text('OR',
-    style: TextStyle(color: Color(0xFF757373),
-    fontFamily: 'Roboto',
-    fontWeight: FontWeight.w900,
-    fontSize: 16.0,
-    ),
-    textAlign: TextAlign.center),
+            Text('OR',
+                style: TextStyle(color: Color(0xFF757373),
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.w900,
+                  fontSize: 16.0,
+                ),
+                textAlign: TextAlign.center),
             SizedBox(height: 20),
             const Row(
               children: <Widget>[
@@ -97,8 +99,9 @@ class _SignInState extends State<SignIn> {
             ),
             SizedBox(height: 25,),
             SizedBox(height: 25),
+
             Row(
-              mainAxisAlignment: MainAxisAlignment.center, // Centre les boutons sur la ligne
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
                   onTap: () async {
@@ -147,7 +150,7 @@ class _SignInState extends State<SignIn> {
                     emailController.text.trim(),
                     passwordController.text.trim(),
                   );
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Localisation()));
                 } on FirebaseAuthException catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur de connexion: ${e.message}')));
                 } finally {

@@ -26,9 +26,10 @@ class splashscreenApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Hanout',
       theme: ThemeData(
+        fontFamily: 'Roboto',
         primarySwatch: Colors.blue,
       ),
-      home: splashscreen(),
+      home: SplashScreen(),
     );
   }
 }
