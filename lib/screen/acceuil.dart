@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hanout/screen/processus_de_commande/Order_screen.dart';
 import 'package:hanout/widget/bottom_navigation_bar.dart';
 import 'package:hanout/widget/map.dart';
+import 'package:hanout/widget/SearchBar.dart';
 
 
 class Acceuil extends StatefulWidget {
@@ -45,6 +46,7 @@ class _AcceuilState extends State<Acceuil> {
                   ),
                 ]
             ),
+            SearchBar(),
 
             Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -62,8 +64,7 @@ class _AcceuilState extends State<Acceuil> {
                 )
             ),
 
-            // Add the Map widget here
-            Map(height: 200, screenWidth: MediaQuery.of(context).size.width),
+            //Map(height: 200, screenWidth: MediaQuery.of(context).size.width),
 
           ],
         ),
