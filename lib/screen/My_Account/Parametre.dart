@@ -58,19 +58,38 @@ class _ParametreState extends State<Parametre> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text('Nom'),
+                  Text('Nouveau Nom',
+                    style:  TextStyle(
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w900,
+                      fontSize: 20.0,
+                    ),),
                   SizedBox(height: 10,),
                   MyTextFormField(
                     hintText: 'Nouveau Nom',
                     controller: _nameController,
                   ),
                   SizedBox(height: 20),
+                  Text('Nouveau Email',
+                    style:  TextStyle(
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w900,
+                      fontSize: 20.0,
+                    ),),
+                  SizedBox(height: 10,),
                   MyTextFormField(
                     hintText: 'Nouveau Email',
                     controller: _emailController,
                     validator: (value) => value!.isEmpty ? 'Veuillez entrer votre nouvel email' : null,
                   ),
                   SizedBox(height: 20),
+                  Text('Nouveau mot de passe',
+                    style:  TextStyle(
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w900,
+                      fontSize: 20.0,
+                    ),),
+                  SizedBox(height: 10,),
                   MyTextFormField(
                     hintText: 'Nouveau mot de passe',
                     controller: _passwordController,
@@ -78,6 +97,13 @@ class _ParametreState extends State<Parametre> {
                     validator: (value) => value!.isEmpty ? 'Veuillez entrer votre nouveau mot de passe' : null,
                   ),
                   SizedBox(height: 20),
+                  Text('Confirmez le nouveau mot de passe',
+                      style:  TextStyle(
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w900,
+                      fontSize: 20.0,
+                  ),),
+                  SizedBox(height: 10,),
                   MyTextFormField(
                     hintText: 'Confirmez le nouveau mot de passe',
                     controller: _confirmPasswordController,
