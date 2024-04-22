@@ -20,8 +20,7 @@ class _SearchState extends State<Search> {
       ),
       bottomNavigationBar: MyBottomNavigationBar(
         currentIndex: 1,
-        onItemSelected: (index) {
-          print("Selected index: $index");
+        onItemSelected: (index) { print("Selected index: $index");
         },
       ),
     );
