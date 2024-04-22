@@ -1,58 +1,82 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hanout/color.dart';
+import 'package:hanout/screen/processus_de_commande/Order_screen.dart';
+import 'package:hanout/widget/bottom_navigation_bar.dart';
+import 'package:hanout/widget/map.dart';
+import 'package:hanout/widget/SearchBar.dart';
+
 
 class Acceuil extends StatefulWidget {
-  const Acceuil({Key? key}) : super(key: key);
+  final String cityName;
+
+  const Acceuil({Key? key, this.cityName = ''}) : super(key: key);
 
   @override
   _AcceuilState createState() => _AcceuilState();
 }
 
 class _AcceuilState extends State<Acceuil> {
-  String? _username;
+  late String _cityName;
+  late double screenWidth;
 
   @override
   void initState() {
     super.initState();
-    fetchUsername();
-  }
-
-  Future<void> fetchUsername() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-      if (userDoc.exists) {
-        setState(() {
-          _username = userDoc.get('name');
-        });
-      }
-    }
+    _cityName = widget.cityName;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('acceuil'),
+        centerTitle: true,
+        title: Image.asset('assets/logo.png', height: 50),
       ),
-      body:
-      Center(
-        child: Container(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              if (_username != null)
-                Text('Bonjour, $_username '),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  IconButton(
+                    padding: EdgeInsets.only(right: 30),
+                    icon: Icon(Icons.shopping_cart, size: 35),
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => OrderScreen()));
+                    },
+                  ),
+                ]
+            ),
+            SearchBar(),
 
-              SizedBox(height: 20.0),
+            Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                          _cityName,
+                          style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontSize: 20,
+                          )
+                      )
+                    ]
+                )
+            ),
 
-            ],
-          ),
+            //Map(height: 200, screenWidth: MediaQuery.of(context).size.width),
+
+          ],
         ),
+      ),
+      bottomNavigationBar: MyBottomNavigationBar(
+        currentIndex: 0,
+        onItemSelected: (index) {},
       ),
     );
   }
 }
+
+
+
+

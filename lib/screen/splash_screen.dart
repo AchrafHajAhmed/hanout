@@ -1,20 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hanout/main.dart';
-import 'package:hanout/screen/authentification/log_in.dart';
-import 'package:hanout/screen/authentification/sign_up.dart';
 import 'package:hanout/color.dart';
-import 'package:hanout/screen/acceuil.dart';
+import 'package:hanout/screen/authentification/log_in.dart';
 
-class splashscreen extends StatefulWidget {
-  const splashscreen({Key? key}) : super(key: key);
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
-  State<splashscreen> createState() => _splashscreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _splashscreenState extends State<splashscreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
@@ -22,7 +20,7 @@ class _splashscreenState extends State<splashscreen> with SingleTickerProviderSt
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     Future.delayed(const Duration(seconds: 5), () {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => LogIn()),
+        MaterialPageRoute(builder: (_) => SignIn()),
       );
     });
   }
@@ -40,7 +38,7 @@ class _splashscreenState extends State<splashscreen> with SingleTickerProviderSt
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Center(
-              child: Image.asset('assets/eee.png'),
+              child: Image.asset('assets/logo.png'),
             ),
           ],
         ),

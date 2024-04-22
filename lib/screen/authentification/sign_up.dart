@@ -49,7 +49,9 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign Up'),
+        centerTitle: true,
+        title: Image.asset('assets/logo.png',
+          height: 50,),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -57,66 +59,157 @@ class _SignUpState extends State<SignUp> {
           key: _formKey,
           child: Column(
             children: <Widget>[
-              Image.asset('assets/eee.png'),
+              SizedBox(height: 20),
+              const Text (
+                'Sign Up',
+                style:  TextStyle(
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.w900,
+                  fontSize: 32.0,
+                ),
+              ),
+              SizedBox(height: 20),
               MyTextFormField(
-                labelText: 'Name',
+                hintText: 'Name',
                 onSaved: (input) => _name = input,
                 validator: (input) =>
                 input == null || input.isEmpty ? 'Please enter a name' : null,
               ),
+              SizedBox(height: 20),
               MyTextFormField(
-                labelText: 'Email',
+                hintText: 'Email',
                 onSaved: (input) => _email = input,
                 validator: (input) =>
                 input == null || input.isEmpty ? 'Please enter an email' : null,
               ),
+              SizedBox(height: 20),
               MyTextFormField(
                 controller: _passwordController,
-                labelText: 'Password',
+                hintText: 'Password',
                 onSaved: (input) => _password = input,
                 validator: (input) => input == null || input.length < 6
                     ? 'Your password needs to be at least 6 characters'
                     : null,
                 obscureText: true,
               ),
+              SizedBox(height: 20),
               MyTextFormField(
-                labelText: 'Confirm Password',
+                hintText: 'Confirm Password',
                 validator: (input) =>
                 input != _passwordController.text ? 'Passwords do not match' : null,
                 obscureText: true,
               ),
-              Checkbox(value: isChecked,
-                  activeColor: Colors.blueAccent,
-                  tristate: true,
-                  onChanged: (newBool){
-                setState(() {
-                  isChecked = newBool;
-                });
-                  }
-              ),
-              SizedBox(height: 20),
-              MyElevatedButton(elevatedbutton: 'Sign Up', onPressed: SignUp ),
-              MyTextButton(
-                buttonText: 'Log in',
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => LogIn()),
-                  );
-                },
-              ),
-              InkWell(
-                onTap: _signInWithGoogle,
-                child: Padding(
-                  padding: EdgeInsets.all(1.0),
-                  child: SizedBox(
-                    width: 100,
-                    height: 50,
-                    child: Image.asset('assets/google.png'),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Checkbox(
+                  value: isChecked,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      isChecked = value!;
+                    });
+                  },
+                  checkColor: Colors.white,
+                  activeColor: Colors.black,
+                ),
+                SizedBox(height: 20,),
+                const Expanded(
+                  child: Text(
+                    'Yes, I want to receive discounts, loyalty offers and other updates.',
+                    style: TextStyle(
+                    ),
                   ),
                 ),
-              ),
+              ],
+            ),
+              SizedBox(height: 25),
+              Text('OR',
+                  style: TextStyle(color: Color(0xFF757373),
+                    fontFamily: 'Roboto',
+                    fontWeight: FontWeight.w900,
+                    fontSize: 16.0,
+                  ),
+                  textAlign: TextAlign.center),
+              SizedBox(height: 25),
+              const Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Divider(
+                      thickness: 1,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child:
 
+                      Text('Sign Up Using')),
+                  Expanded(
+                    child: Divider(
+                      thickness: 1,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      setState(() {
+                        _isLoading = false;
+                      });
+                      final userCredential = await _auth.signInWithFacebook();
+                      if (userCredential != null) {
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Facebook Sign-In cancelled or failed')));
+                      }
+                      setState(() {
+                        _isLoading = false;
+                      });
+                    },
+                    child: Image.asset('assets/facebook.png', height: 50),
+                  ),
+                  const SizedBox(width: 10,),
+                  GestureDetector(
+                    onTap: () async {
+                      setState(() {
+                        _isLoading = false;
+                      });
+                      final userCredential = await _auth.signInWithGoogle();
+                      if (userCredential != null) {
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Google Sign-In cancelled or failed')));
+                      }
+                      setState(() {
+                        _isLoading = false;
+                      });
+                    },
+                    child: Image.asset('assets/google.png', height: 50),
+                  ),
+                ],
+              ),
+              SizedBox(height: 30,),
+              MyElevatedButton(
+                buttonText: 'Sign Up',
+                onPressed: () async {
+                  SignUp();
+                },
+              ),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Already have an account?'),
+                    MyTextButton(
+                      buttonText:'Sign In',
+                      onPressed: () {
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignIn()));
+                      },
+                    ),])
             ],
           ),
         ),
@@ -134,7 +227,7 @@ class _SignUpState extends State<SignUp> {
         );
         String userUid = userCredential.user!.uid;
         await _auth.addUserToFirestore(userUid, _name!, _email!);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LogIn()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignIn()));
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.toString())),

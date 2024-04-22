@@ -1,8 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'screen/authentification/sign_up.dart';
-import 'screen/acceuil.dart';
-import 'screen/authentification/log_in.dart';
 import 'screen/splash_screen.dart';
 
 void main() async {
@@ -26,9 +23,10 @@ class splashscreenApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Hanout',
       theme: ThemeData(
+        fontFamily: 'Roboto',
         primarySwatch: Colors.blue,
       ),
-      home: splashscreen(),
+      home: SplashScreen(),
     );
   }
 }

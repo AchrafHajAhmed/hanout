@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hanout</string>
+    <string name="facebook_app_id">2058194847886325</string>
+    <string name="fb_login_protocol_scheme">fb1234</string>
+    <string name="facebook_client_token">82e16dc20459fa06300c5787b53f999a</string>
+
+</resources>
