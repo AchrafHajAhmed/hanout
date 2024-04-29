@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hanout/screen/processus_de_commande/Order_screen.dart';
+import 'package:hanout/screen/processus_de_commande/Panier.dart';
 import 'package:hanout/widget/bottom_navigation_bar.dart';
 import 'package:hanout/widget/map.dart';
-import 'package:hanout/widget/SearchBar.dart';
-
 
 class Acceuil extends StatefulWidget {
   final String cityName;
@@ -41,13 +39,11 @@ class _AcceuilState extends State<Acceuil> {
                     padding: EdgeInsets.only(right: 30),
                     icon: Icon(Icons.shopping_cart, size: 35),
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => OrderScreen()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => Panier()));
                     },
                   ),
                 ]
             ),
-            SearchBar(),
-
             Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
@@ -64,7 +60,7 @@ class _AcceuilState extends State<Acceuil> {
                 )
             ),
 
-            //Map(height: 200, screenWidth: MediaQuery.of(context).size.width),
+            Map(height: 200, screenWidth: MediaQuery.of(context).size.width),
 
           ],
         ),

@@ -66,25 +66,25 @@ class _CommandeState extends State<Commande> {
           ),),
       ],),
     ),
-      FutureBuilder<List<CommandeData>>(
-        future: _futureCommandes,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
-          } else if (snapshot.hasError) {
-            return Text('Erreur: ${snapshot.error}');
-          } else if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(snapshot.data![index].nom),
-                  subtitle: Text(snapshot.data![index].date),
+              FutureBuilder<List<CommandeData>>(
+                future: _futureCommandes,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Erreur: ${snapshot.error}');
+                  } else if (snapshot.hasData) {
+                    return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(snapshot.data![index].nom),
+                          subtitle: Text(snapshot.data![index].date),
                 );
               },
             );
-          } else {
-            return Text('Aucune commande trouvée');
+                  } else {
+                    return Text('Aucune commande trouvée');
           }
         },
       ),
