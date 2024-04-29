@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hanout/screen/processus_de_commande/Panier.dart';
 import 'package:hanout/widget/bottom_navigation_bar.dart';
 import 'package:hanout/widget/map.dart';
-import 'package:hanout/widget/SearchBar.dart';
-
 
 class Acceuil extends StatefulWidget {
   final String cityName;
