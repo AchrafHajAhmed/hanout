@@ -8,6 +8,9 @@ import 'package:hanout/widget/elevated_button.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hanout/screen/authentification/log_in.dart';
+import 'package:hanout/screen/acceuil.dart';
+import 'package:flutter/services.dart';
+
 
 class SignUp extends StatefulWidget {
   @override
@@ -37,6 +40,7 @@ class _SignUpState extends State<SignUp> {
   File? _fiscalCardImage;
 
   bool _isLoading = false;
+  bool? isChecked = false;
   int _currentPage = 0;
 
   Future<void> _pickImages() async {
@@ -169,6 +173,100 @@ class _SignUpState extends State<SignUp> {
               obscureText: true,
               validator: (input) => input != null && input == _userPasswordController.text ? null : 'Passwords do not match',
             ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Checkbox(
+                  value: isChecked,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      isChecked = value!;
+                    });
+                  },
+                  checkColor: Colors.white,
+                  activeColor: Colors.black,
+                ),
+                SizedBox(height: 20,),
+                const Expanded(
+                  child: Text(
+                    'Yes, I want to receive discounts, loyalty offers and other updates.',
+                    style: TextStyle(
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 25),
+            Text('OR',
+                style: TextStyle(color: Color(0xFF757373),
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.w900,
+                  fontSize: 16.0,
+                ),
+                textAlign: TextAlign.center),
+            SizedBox(height: 25),
+            const Row(
+              children: <Widget>[
+                Expanded(
+                  child: Divider(
+                    thickness: 1,
+                    color: Colors.grey,
+                  ),
+                ),
+                Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child:
+
+                    Text('Sign Up Using')),
+                Expanded(
+                  child: Divider(
+                    thickness: 1,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () async {
+                    setState(() {
+                      _isLoading = false;
+                    });
+                    final userCredential = await _auth.signInWithFacebook();
+                    if (userCredential != null) {
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Facebook Sign-In cancelled or failed')));
+                    }
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  },
+                  child: Image.asset('assets/facebook.png', height: 50),
+                ),
+                const SizedBox(width: 10,),
+                GestureDetector(
+                  onTap: () async {
+                    setState(() {
+                      _isLoading = false;
+                    });
+                    final userCredential = await _auth.signInWithGoogle();
+                    if (userCredential != null) {
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Google Sign-In cancelled or failed')));
+                    }
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  },
+                  child: Image.asset('assets/google.png', height: 50),
+                ),
+              ],
+            ),
             SizedBox(height: 20),
             MyElevatedButton(
               buttonText: 'Sign Up',
@@ -206,7 +304,18 @@ class _SignUpState extends State<SignUp> {
             MyTextFormField(
               controller: _merchantPhoneController,
               hintText: 'Phone Number',
-              validator: (input) => input != null && input.isNotEmpty ? null : 'Please enter a phone number',
+              validator: (input) {
+                if (input == null || input.isEmpty) {
+                  return 'Please enter a phone number';
+                } else if (input.length != 8) {
+                  return 'Phone number must be 8 digits';
+                }
+                return null;
+              },
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), // Accepts only digits
+                LengthLimitingTextInputFormatter(8), // Limits input to 8 characters
+              ],
             ),
             SizedBox(height: 20),
             MyTextFormField(
@@ -228,11 +337,14 @@ class _SignUpState extends State<SignUp> {
               obscureText: true,
               validator: (input) => input != null && input == _merchantPasswordController.text ? null : 'Passwords do not match',
             ),
-            SizedBox(height: 20),
-            TextButton(
+            SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            MyTextButton(
+              buttonText: 'Upload les photo de carte CIN et Matricule fiscale',
               onPressed: _pickImages,
-              child: Text('Upload ID and Fiscal Card'),
-            ),
+            ),]),
             _idCardImage != null ? Text(_idCardImage!.path.split('/').last) : SizedBox(),
             _fiscalCardImage != null ? Text(_fiscalCardImage!.path.split('/').last) : SizedBox(),
             SizedBox(height: 20),
@@ -240,6 +352,7 @@ class _SignUpState extends State<SignUp> {
               buttonText: 'Sign Up',
               onPressed: () => _handleSignUp(true),
             ),
+            SizedBox(height: 50,)
           ],
         ),
       ),

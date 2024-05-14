@@ -3,6 +3,7 @@ import 'package:square_in_app_payments/in_app_payments.dart';
 import 'package:square_in_app_payments/models.dart';
 import 'package:hanout/widget/elevated_button.dart';
 import 'package:hanout/color.dart';
+import 'paiement_done.dart';
 
 class TotalCostScreen extends StatefulWidget {
   final double totalAchat;
@@ -24,7 +25,7 @@ class _TotalCostScreenState extends State<TotalCostScreen> {
   void initState() {
     super.initState();
     totalCout = widget.totalAchat + widget.livraison;
-    fraisService = totalCout * 0.01;
+    fraisService = totalCout * 0.05;
     taxeTVA = fraisService * 0.19;
     grandTotal = totalCout + fraisService + taxeTVA;
     initSquarePayment();
@@ -55,6 +56,11 @@ class _TotalCostScreenState extends State<TotalCostScreen> {
 
   Future<void> processPayment(String nonce) async {
     print("Nonce: $nonce");
+    // Navigate to Done page when card entry is complete
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Done()),
+    );
   }
 
   @override
@@ -104,7 +110,6 @@ class _TotalCostScreenState extends State<TotalCostScreen> {
         ),
       ),
     );
-
   }
 }
 
@@ -126,6 +131,7 @@ class CostRow extends StatelessWidget {
     );
   }
 }
+
 
 
 

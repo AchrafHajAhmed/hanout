@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'screen/splash_screen.dart';
+import 'package:hanout/Commercants/Commercants_no_verifier.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,6 +11,7 @@ void main() async {
       appId: '1:933084221712:android:2683898f417ab0186a5595',
       messagingSenderId: '933084221712',
       projectId: 'hanout-a372e',
+        storageBucket: 'hanout-a372e.appspot.com',
     ),
   );
   runApp(splashscreenApp());
