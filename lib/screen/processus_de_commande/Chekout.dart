@@ -56,7 +56,6 @@ class _TotalCostScreenState extends State<TotalCostScreen> {
 
   Future<void> processPayment(String nonce) async {
     print("Nonce: $nonce");
-    // Navigate to Done page when card entry is complete
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => Done()),

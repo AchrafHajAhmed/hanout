@@ -45,7 +45,7 @@ class DistanceCalculator {
     for (var merchant in marchands) {
       double distance = calculateDistance(merchant['latitude'], merchant['longitude']);
       double cost = calculateCost(distance);
-      print('Distance to merchant: $distance meters');
+      print('Distance jusqu\'au commerçant: $distance meters');
       print('Cost to reach merchant: $cost dinar');
     }
   }

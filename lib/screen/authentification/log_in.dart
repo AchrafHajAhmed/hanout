@@ -42,7 +42,7 @@ class _SignInState extends State<SignIn> {
             ],
             SizedBox(height: 20),
             const Text(
-              'Sign In',
+              'Se connecter',
               style: TextStyle(
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.w900,
@@ -64,14 +64,14 @@ class _SignInState extends State<SignIn> {
             Align(
               alignment: Alignment.centerLeft,
               child: MyTextButton(
-                buttonText: 'Forget Your Password?',
+                buttonText: 'Mot de passe oublié ?',
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => ResetPasswordPage()));
                 },
               ),
             ),
             Text(
-              'OR',
+              'OU',
               style: TextStyle(
                 color: Color(0xFF757373),
                 fontFamily: 'Roboto',
@@ -91,7 +91,7 @@ class _SignInState extends State<SignIn> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text('Sign In Using'),
+                  child: Text('Se connecter avec'),
                 ),
                 Expanded(
                   child: Divider(
@@ -114,7 +114,7 @@ class _SignInState extends State<SignIn> {
                     if (userCredential != null) {
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Facebook Sign-In cancelled or failed')));
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Connexion avec Facebook annulée ou échouée')));
                     }
                     setState(() {
                       _isLoading = false;
@@ -132,7 +132,7 @@ class _SignInState extends State<SignIn> {
                     if (userCredential != null) {
                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Google Sign-In cancelled or failed')));
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Connexion avec Google annulée ou échouée')));
                     }
                     setState(() {
                       _isLoading = false;
@@ -144,7 +144,7 @@ class _SignInState extends State<SignIn> {
             ),
             SizedBox(height: 20),
             MyElevatedButton(
-              buttonText: 'Log In',
+              buttonText: 'Connexion',
               onPressed: () async {
                 setState(() => _isLoading = false);
                 try {
@@ -163,9 +163,9 @@ class _SignInState extends State<SignIn> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Need An Account? '),
+                Text('Besoin d\'un compte ?') ,
                 MyTextButton(
-                  buttonText: 'Sign Up',
+                  buttonText: 'Inscrivez-vous',
                   onPressed: () {
                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignUp()));
                   },
@@ -188,17 +188,13 @@ class _SignInState extends State<SignIn> {
 
       if (userData.exists) {
         if (merchantData.exists) {
-          // Vérifier le statut du commerçant
           final status = merchantData.get('status');
           if (status == true) {
-            // Redirection vers la page des commerçants (CommercantsMarket)
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CommercantsMarket()));
           } else {
-            // Redirection vers la page de vérification du commerçant (MerchantVerificationPage)
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MerchantVerificationPage()));
           }
         } else {
-          // Redirection vers la page de localisation pour les utilisateurs normaux
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Localisation()));
         }
       }

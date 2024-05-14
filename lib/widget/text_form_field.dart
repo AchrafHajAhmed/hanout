@@ -7,16 +7,17 @@ class MyTextFormField extends StatefulWidget {
   final FormFieldValidator<String>? validator;
   final ValueChanged<String?>? onSaved;
   final bool obscureText;
-  final List<TextInputFormatter>? inputFormatters; // Adding inputFormatters as a parameter
+  final List<TextInputFormatter>? inputFormatters;
+
 
   const MyTextFormField({
     Key? key,
     required this.hintText,
     this.controller,
     this.validator,
+    this.inputFormatters,
     this.onSaved,
     this.obscureText = false,
-    this.inputFormatters,
   }) : super(key: key);
 
   @override
@@ -47,19 +48,40 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
     return TextFormField(
       controller: _controller,
       obscureText: _isObscured,
+      validator: widget.validator,
+      onSaved: widget.onSaved,
+      style: const TextStyle(
+        fontFamily: 'Roboto',
+        fontWeight: FontWeight.w900,
+        fontSize: 16.0,
+      ),
       decoration: InputDecoration(
         hintText: widget.hintText,
-        border: OutlineInputBorder(),
+        hintStyle: TextStyle(color: Color(0xFFBDBDBD),
+          fontFamily: 'Roboto',
+          fontWeight: FontWeight.w900,
+          fontSize: 16.0,),
+        filled: true,
+        fillColor: Color(0xFFF6F6F6),
+        border:  OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
         suffixIcon: widget.obscureText ? IconButton(
-          icon: Icon(_isObscured ? Icons.visibility_off : Icons.visibility),
+          icon: Icon(
+            _isObscured ? Icons.visibility_off : Icons.visibility,
+          ),
           onPressed: () {
-            setState(() => _isObscured = !_isObscured);
+            setState(() {
+              _isObscured = !_isObscured;
+            });
           },
         ) : null,
       ),
-      validator: widget.validator,
-      onSaved: widget.onSaved,
-      inputFormatters: widget.inputFormatters,
+        inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+    LengthLimitingTextInputFormatter(8),
+    ...(widget.inputFormatters ?? []),
+    ],
     );
   }
 }
