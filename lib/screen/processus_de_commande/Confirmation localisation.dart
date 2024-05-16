@@ -64,10 +64,10 @@ class _ConfirmationLocalisationState extends State<ConfirmationLocalisation> {
             ),
         ],
       ),
-    floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-    floatingActionButton: Padding(
-    padding: const EdgeInsets.all(40.0),
-    child:MyElevatedButton(buttonText: 'Confirm', onPressed:  () {
+             floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.all(40.0),
+          child:MyElevatedButton(buttonText: 'Confirm', onPressed:  () {
         if (_distanceCalculator != null) {
           double deliveryCost = _distanceCalculator!.calculateCost(
               _distanceCalculator!.calculateDistance(

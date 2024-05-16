@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hanout/color.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hanout/widget/bottom_commercants.dart';
-import 'package:hanout/Commercants/ajouter_produit.dart'; // Import the page to add a product
+import 'package:hanout/Commercants/ajouter_produit.dart';
 
 class CommercantsMarket extends StatefulWidget {
   @override
@@ -108,3 +108,4 @@ class _CommercantsMarketState extends State<CommercantsMarket> {
     );
   }
 }
+

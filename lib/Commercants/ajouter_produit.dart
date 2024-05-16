@@ -33,9 +33,17 @@ class _AjouterProduitState extends State<AjouterProduit> {
 
 
 
-  void updateProductAvailability(String documentId, bool newAvailability) {
-    products.doc(documentId).update({'available': newAvailability});
+  void updateProductAvailability(String documentId, bool newAvailability) async {
+    await FirebaseFirestore.instance.collection('produit').doc(documentId).update({'available': newAvailability});
+
+    // Ajouter le produit disponible à la collection 'produitdisponible' si disponible
+    if (newAvailability) {
+      await FirebaseFirestore.instance.collection('produitdisponible').doc(documentId).set({'available': true});
+    } else {
+      await FirebaseFirestore.instance.collection('produitdisponible').doc(documentId).delete();
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +74,7 @@ class _AjouterProduitState extends State<AjouterProduit> {
           SvgPicture.asset('assets/Market.svg', height: 60),
           SizedBox(width: 10),
           Text(
-            'Paramètre',
+            'Ajouter Produit',
             style: TextStyle(
               fontWeight: FontWeight.w900,
               fontSize: 24.0,

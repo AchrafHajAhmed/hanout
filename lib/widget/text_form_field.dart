@@ -77,11 +77,6 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
           },
         ) : null,
       ),
-        inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-    LengthLimitingTextInputFormatter(8),
-    ...(widget.inputFormatters ?? []),
-    ],
     );
   }
 }

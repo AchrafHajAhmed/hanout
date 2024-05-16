@@ -6,6 +6,7 @@ import 'package:hanout/screen/acceuil.dart';
 import 'package:hanout/screen/authentification/log_in.dart';
 import 'package:hanout/Commercants/Commercant_market.dart';
 import 'package:hanout/screen/My_Account/Parametre.dart';
+import 'package:hanout/Commercants/Commercants_no_verifier.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
