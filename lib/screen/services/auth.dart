@@ -23,8 +23,7 @@ class Auth {
     return await taskSnapshot.ref.getDownloadURL();
   }
 
-  Future<void> addUserToFirestore(String userId, String name,
-      String email) async {
+  Future<void> addUserToFirestore(String userId, String name, String email) async {
     await _firestore.collection('users').doc(userId).set({
       'uid': userId,
       'name': name,
@@ -32,23 +31,19 @@ class Auth {
     });
   }
 
-  Future<UserCredential> signInWithEmailAndPassword(String email,
-      String password) async {
-    return await _firebaseAuth.signInWithEmailAndPassword(
-        email: email, password: password);
+  Future<UserCredential> signInWithEmailAndPassword(String email, String password) async {
+    return await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
   }
 
   Future<UserCredential?> signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
     if (googleUser != null) {
-      final GoogleSignInAuthentication googleAuth = await googleUser
-          .authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      final UserCredential userCredential = await _firebaseAuth
-          .signInWithCredential(credential);
+      final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
       await addUserToFirestore(
         userCredential.user!.uid,
         userCredential.user!.displayName ?? '',
@@ -68,10 +63,8 @@ class Auth {
     final LoginResult loginResult = await FacebookAuth.instance.login();
     if (loginResult.status == LoginStatus.success) {
       final AccessToken accessToken = loginResult.accessToken!;
-      final AuthCredential credential = FacebookAuthProvider.credential(
-          accessToken.token);
-      final UserCredential userCredential = await _firebaseAuth
-          .signInWithCredential(credential);
+      final AuthCredential credential = FacebookAuthProvider.credential(accessToken.token);
+      final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
       await addUserToFirestore(
         userCredential.user!.uid,
         userCredential.user!.displayName ?? 'Facebook User',
@@ -91,11 +84,9 @@ class Auth {
     await _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 
-  Future<UserCredential> createUserWithEmailAndPassword(String email,
-      String password) async {
+  Future<UserCredential> createUserWithEmailAndPassword(String email, String password) async {
     try {
-      final UserCredential userCredential = await _firebaseAuth
-          .createUserWithEmailAndPassword(
+      final UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -106,19 +97,12 @@ class Auth {
     }
   }
 
-  Future<UserCredential> createMerchant(String name, String email,
-      String phoneNumber, String fiscalNumber, String password,
-      File idCardImage, File fiscalCardImage) async {
-    UserCredential userCredential = await createUserWithEmailAndPassword(
-        email, password);
+  Future<UserCredential> createMerchant(String name, String email, String phoneNumber, String fiscalNumber, String password, File idCardImage, File fiscalCardImage) async {
+    UserCredential userCredential = await createUserWithEmailAndPassword(email, password);
     try {
-      String idCardUrl = await uploadImage(
-          idCardImage, 'id_cards/${userCredential.user!.uid}');
-      String fiscalCardUrl = await uploadImage(
-          fiscalCardImage, 'fiscal_cards/${userCredential.user!.uid}');
-      await _firestore.collection('commercants')
-          .doc(userCredential.user!.uid)
-          .set({
+      String idCardUrl = await uploadImage(idCardImage, 'id_cards/${userCredential.user!.uid}');
+      String fiscalCardUrl = await uploadImage(fiscalCardImage, 'fiscal_cards/${userCredential.user!.uid}');
+      await _firestore.collection('commercants').doc(userCredential.user!.uid).set({
         'uid': userCredential.user!.uid,
         'name': name,
         'email': email,
@@ -126,13 +110,12 @@ class Auth {
         'fiscalNumber': fiscalNumber,
         'idCardUrl': idCardUrl,
         'fiscalCardUrl': fiscalCardUrl,
+        'status': false, // Ajout du champ status avec la valeur false par défaut
       });
       return userCredential;
     } catch (e) {
-      await userCredential.user!
-          .delete();
-      throw Exception('Échec de la création du commerçan: $e');
+      await userCredential.user!.delete();
+      throw Exception('Échec de la création du commerçant: $e');
     }
   }
-
 }

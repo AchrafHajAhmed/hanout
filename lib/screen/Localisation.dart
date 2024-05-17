@@ -18,25 +18,29 @@ class _LocalisationState extends State<Localisation> {
   void _saveAddress() async {
     String? cityName = await getCityFromUserLocation();
     if (cityName != null) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil(cityName: cityName)));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Acceuil(cityName: cityName)),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Unable to retrieve city name. Please try again.'))
+        SnackBar(content: Text('Unable to retrieve city name. Please try again.')),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Address'),
         actions: <Widget>[
           TextButton(
             onPressed: () {
-              Navigator.pushReplacement(context, MaterialPageRoute(
-                  builder: (context) => Acceuil(cityName: '')));
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => Acceuil(cityName: '')),
+              );
             },
             child: Text('Skip', style: TextStyle(color: AppColors.secondaryColor)),
           ),
@@ -57,8 +61,11 @@ class _LocalisationState extends State<Localisation> {
               ),
             ),
           ),
-
-          Map(height: MediaQuery.of(context).size.height * 3 / 5,  screenWidth: MediaQuery.of(context).size.width),
+          CustomMap(
+            height: MediaQuery.of(context).size.height * 3 / 5,
+            screenWidth: MediaQuery.of(context).size.width,
+            markers: {},
+          ),
           SizedBox(height: 20),
           MyElevatedButton(
             buttonText: 'Save Address',
@@ -81,9 +88,6 @@ Future<String?> getCityFromUserLocation() async {
     return null;
   }
 }
-
-
-
 
 
 

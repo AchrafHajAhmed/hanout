@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hanout/color.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:hanout/widget/bottom_commercants.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hanout/Commercants/ajouter_produit.dart';
+import 'package:hanout/widget/bottom_commercants.dart';
 
 class CommercantsMarket extends StatefulWidget {
   @override
@@ -11,86 +11,100 @@ class CommercantsMarket extends StatefulWidget {
 }
 
 class _CommercantsMarketState extends State<CommercantsMarket> {
-  int _currentIndex = 0;
+  int _selectedIndex = 0;
 
-  void _onTabSelected(int index) {
+  void _onItemTapped(int index) {
     setState(() {
-      _currentIndex = index;
+      _selectedIndex = index;
     });
-  }
-
-  void updateProductAvailability(String documentId, bool newAvailability) async {
-    await FirebaseFirestore.instance.collection('products')
-        .doc(documentId)
-        .update({'available': newAvailability});
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(newAvailability ? 'Produit maintenant disponible' : 'Produit maintenant non disponible')),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    String? commercantUid = FirebaseAuth.instance.currentUser?.uid;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Image.asset('assets/logo.png', height: 50,),
+        title: Image.asset('assets/logo.png', height: 50), // Remplacer par le chemin de votre logo
       ),
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('produit').where('available', isEqualTo: true).snapshots(),
+        stream: FirebaseFirestore.instance.collection('produitdisponible').where('uid', isEqualTo: commercantUid).snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(color: AppColors.primaryColor),
-            );
-          }
           if (snapshot.hasError) {
-            return Center(
-              child: Text('Une erreur s\'est produite'),
-            );
+            return Text('Something went wrong');
           }
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset('assets/Market.svg', height: 202),
-                  SizedBox(height: 20),
-                  Text('Your market is empty'),
-                ],
-              ),
-            );
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
           }
-          return ListView(
-            children: snapshot.data!.docs.map((DocumentSnapshot document) {
+          if (snapshot.data?.docs.isEmpty ?? true) {
+            return Center(child: Text('No products found'));
+          }
+          return ListView.separated(
+            padding: EdgeInsets.all(8.0),
+            itemCount: snapshot.data!.docs.length,
+            separatorBuilder: (context, index) => Divider(color: Colors.grey),
+            itemBuilder: (context, index) {
+              DocumentSnapshot document = snapshot.data!.docs[index];
               Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-              return ListTile(
-                title: Text(data['name']),
-                subtitle: Text(data['description']),
-                trailing: Text('${data['price']} DT'),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text('Modifier la disponibilité'),
-                      content: Text('Voulez-vous changer la disponibilité de ce produit?'),
-                      actions: <Widget>[
-                        TextButton(
-                          child: Text('Annuler'),
-                          onPressed: () => Navigator.of(context).pop(),
-                        ),
-                        TextButton(
-                          child: Text('Confirmer'),
-                          onPressed: () {
-                            updateProductAvailability(document.id, !(data['available'] as bool));
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl: data['imageUrl'],
+                      placeholder: (context, url) => CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                      width: 70,
+                      height: 70,
                     ),
-                  );
-                },
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                data['name'],
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                              SizedBox(width: 10),
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade300,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  'Disponible',
+                                  style: TextStyle(color: Colors.black, fontSize: 12),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 5),
+                          Text(
+                            'DESCRIPTION:',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            data['description'],
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          SizedBox(height: 5),
+                          Text(
+                            'PRIX: ${data['price']} DT',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               );
-            }).toList(),
+            },
           );
         },
       ),
@@ -99,13 +113,14 @@ class _CommercantsMarketState extends State<CommercantsMarket> {
           Navigator.push(context, MaterialPageRoute(builder: (context) => AjouterProduit()));
         },
         child: Icon(Icons.add),
-        backgroundColor: AppColors.primaryColor,
       ),
       bottomNavigationBar: CommercantsBottomNavigationBar(
-        currentIndex: _currentIndex,
-        onItemSelected: _onTabSelected,
+        currentIndex: _selectedIndex,
+        onItemSelected: _onItemTapped,
       ),
     );
   }
 }
+
+
 

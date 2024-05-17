@@ -1,13 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:hanout/screen/authentification/log_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:hanout/widget/text_button.dart';
 import 'package:hanout/screen/services/auth.dart';
 import 'package:hanout/widget/text_form_field.dart';
 import 'package:hanout/widget/elevated_button.dart';
-import 'package:hanout/screen/acceuil.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:hanout/screen/authentification/log_in.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -19,91 +19,82 @@ class _SignUpState extends State<SignUp> {
   final PageController _pageController = PageController();
   final GlobalKey<FormState> _userFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _merchantFormKey = GlobalKey<FormState>();
-  String? _userEmail, _userPassword, _userName, _userConfirmPassword;
-  String? _merchantEmail, _merchantPassword, _merchantName, _merchantConfirmPassword, _merchantPhoneNumber, _merchantFiscalNumber;
-  File? _idCardImage, _fiscalCardImage;
-  final TextEditingController _userPasswordController = TextEditingController();
-  final TextEditingController _userConfirmPasswordController = TextEditingController();
-  final TextEditingController _merchantPasswordController = TextEditingController();
-  final TextEditingController _merchantConfirmPasswordController = TextEditingController();
+
+  TextEditingController _userNameController = TextEditingController();
+  TextEditingController _userEmailController = TextEditingController();
+  TextEditingController _userPasswordController = TextEditingController();
+  TextEditingController _userConfirmPasswordController = TextEditingController();
+  TextEditingController _merchantNameController = TextEditingController();
+  TextEditingController _merchantEmailController = TextEditingController();
+  TextEditingController _merchantPhoneController = TextEditingController();
+  TextEditingController _merchantFiscalController = TextEditingController();
+  TextEditingController _merchantPasswordController = TextEditingController();
+  TextEditingController _merchantConfirmPasswordController = TextEditingController();
+
+  // Image picking
+  final ImagePicker _picker = ImagePicker();
+  File? _idCardImage;
+  File? _fiscalCardImage;
+
   bool _isLoading = false;
-  bool? isChecked = false;
   int _currentPage = 0;
 
-  final ImagePicker _picker = ImagePicker();
+  Future<void> _pickImages() async {
+    final pickedIdCardImage = await _picker.pickImage(source: ImageSource.gallery);
+    final pickedFiscalCardImage = await _picker.pickImage(source: ImageSource.gallery);
 
-  @override
-  void dispose() {
-    _pageController.dispose();
-    _userPasswordController.dispose();
-    _userConfirmPasswordController.dispose();
-    _merchantPasswordController.dispose();
-    _merchantConfirmPasswordController.dispose();
-    super.dispose();
+    setState(() {
+      _idCardImage = pickedIdCardImage != null ? File(pickedIdCardImage.path) : null;
+      _fiscalCardImage = pickedFiscalCardImage != null ? File(pickedFiscalCardImage.path) : null;
+    });
+  }
+
+  Future<void> _uploadImages(String userId) async {
+    if (_idCardImage != null) {
+      await FirebaseStorage.instance
+          .ref('merchants/$userId/idCard.jpg')
+          .putFile(_idCardImage!);
+    }
+    if (_fiscalCardImage != null) {
+      await FirebaseStorage.instance
+          .ref('merchants/$userId/fiscalCard.jpg')
+          .putFile(_fiscalCardImage!);
+    }
   }
 
   Future<void> _handleSignUp(bool isMerchant) async {
-    if (isMerchant ? _merchantFormKey.currentState!.validate() : _userFormKey.currentState!.validate()) {
+    final formState = isMerchant ? _merchantFormKey.currentState : _userFormKey.currentState;
+    if (formState!.validate()) {
+      formState.save();
       setState(() => _isLoading = true);
       try {
-        if (isMerchant && (_idCardImage == null || _fiscalCardImage == null)) {
-          throw Exception('Veuillez sélectionner à la fois les images de la carte d\'identité et de la carte fiscale avant de vous inscrire.');
-        }
-        final userCredential = isMerchant ?
-        await _auth.createMerchant(
-            _merchantName!,
-            _merchantEmail!,
-            _merchantPhoneNumber!,
-            _merchantFiscalNumber!,
-            _merchantPassword!,
-            _idCardImage!,
-            _fiscalCardImage!
-        ) :
-        await _auth.createUserWithEmailAndPassword(_userEmail!, _userPassword!);
+        final userCredential = isMerchant
+            ? await _auth.createMerchant(
+          _merchantNameController.text,
+          _merchantEmailController.text,
+          _merchantPhoneController.text,
+          _merchantFiscalController.text,
+          _merchantPasswordController.text,
+          _idCardImage!,
+          _fiscalCardImage!,
+        )
+            : await _auth.createUserWithEmailAndPassword(
+          _userEmailController.text,
+          _userPasswordController.text,
+        );
         if (userCredential != null) {
-          await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignIn()));
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('L\'inscription a échoué : $e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sign-Up failed: $e')));
       } finally {
         setState(() => _isLoading = false);
       }
     }
   }
 
-  Future<void> pickImages() async {
-    File? tempFile;
 
-    // Pick ID Card Image
-    tempFile = await pickImage();
-    if (tempFile != null) {
-      setState(() => _idCardImage = tempFile);
 
-      // Pick Fiscal Card Image
-      tempFile = await pickImage();
-      if (tempFile != null) {
-        setState(() => _fiscalCardImage = tempFile);
-      } else {
-        print("La sélection de l'image de la carte fiscale a été annulée.");
-      }
-    } else {
-      print("La sélection de l'image de la carte d'identité a été annulée.");
-    }
-  }
-
-  Future<File?> pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    return pickedFile != null ? File(pickedFile.path) : null;
-  }
-
-  Widget buildImagePreview(File? imageFile) {
-    if (imageFile == null) {
-      return Text("Aucune image sélectionnée.");
-    } else {
-      String fileName = imageFile.path.split('/').last;
-      return Text(fileName, style: TextStyle(fontSize: 16, color: Colors.grey[600]));
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,8 +103,7 @@ class _SignUpState extends State<SignUp> {
         centerTitle: true,
         title: Image.asset('assets/logo.png', height: 50),
       ),
-      body: SafeArea (
-      child : Column(
+      body: Column(
         children: [
           _buildPageIndicator(),
           Expanded(
@@ -128,7 +118,7 @@ class _SignUpState extends State<SignUp> {
           ),
         ],
       ),
-    ));
+    );
   }
 
   Widget _buildPageIndicator() {
@@ -152,150 +142,43 @@ class _SignUpState extends State<SignUp> {
         child: Column(
           children: <Widget>[
             Text('Utilisateur', style: Theme.of(context).textTheme.headline5),
+            SizedBox(height: 20),
             MyTextFormField(
-              hintText: 'Nom',
-              onSaved: (input) => _userName = input,
-              validator: (input) =>
-              input == null || input.isEmpty ? 'Veuillez entrer un nom' : null,
+              controller: _userNameController,
+              hintText: 'Name',
+              validator: (input) => input != null && input.isNotEmpty ? null : 'Please enter a name',
             ),
             SizedBox(height: 20),
             MyTextFormField(
+              controller: _userEmailController,
               hintText: 'Email',
-              onSaved: (input) => _userEmail = input,
-              validator: (input) =>
-              input == null || input.isEmpty ? 'Veuillez entrer une adresse e-mail' : null,
+              validator: (input) => input != null && input.isNotEmpty ? null : 'Please enter an email',
             ),
             SizedBox(height: 20),
             MyTextFormField(
               controller: _userPasswordController,
-              hintText: 'Mot de passe',
-              onSaved: (input) => _userPassword = input,
-              validator: (input) => input == null || input.length < 6
-                  ? 'Votre mot de passe doit contenir au moins 6 caractères.'
-                  : null,
+              hintText: 'Password',
               obscureText: true,
+              validator: (input) => input != null && input.length >= 6 ? null : 'Password must be at least 6 characters',
             ),
             SizedBox(height: 20),
             MyTextFormField(
-              hintText: 'Confirmer le mot de passe',
-              validator: (input) =>
-              input != _userConfirmPasswordController.text ? 'Les mots de passe ne correspondent pas.' : null,
+              controller: _userConfirmPasswordController,
+              hintText: 'Confirm Password',
               obscureText: true,
-            ),
-            SizedBox(height: 5,),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Checkbox(
-                  value: isChecked,
-                  onChanged: (bool? value) {
-                    setState(() {
-                      isChecked = value!;
-                    });
-                  },
-                  checkColor: Colors.white,
-                  activeColor: Colors.black,
-                ),
-                SizedBox(height: 20,),
-                const Expanded(
-                  child: Text(
-                    'Oui, je souhaite recevoir des notifications.',
-                    style: TextStyle(
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 25),
-            Text('OU',
-                style: TextStyle(color: Color(0xFF757373),
-                  fontFamily: 'Roboto',
-                  fontWeight: FontWeight.w900,
-                  fontSize: 16.0,
-                ),
-                textAlign: TextAlign.center),
-            SizedBox(height: 25),
-            const Row(
-              children: <Widget>[
-                Expanded(
-                  child: Divider(
-                    thickness: 1,
-                    color: Colors.grey,
-                  ),
-                ),
-                Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child:
-
-                    Text('Se connecter avec')),
-                Expanded(
-                  child: Divider(
-                    thickness: 1,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
+              validator: (input) => input != null && input == _userPasswordController.text ? null : 'Passwords do not match',
             ),
             SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  onTap: () async {
-                    setState(() {
-                      _isLoading = false;
-                    });
-                    final userCredential = await _auth.signInWithFacebook();
-                    if (userCredential != null) {
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Connexion avec Facebook annulée ou échouée')));
-                    }
-                    setState(() {
-                      _isLoading = false;
-                    });
-                  },
-                  child: Image.asset('assets/facebook.png', height: 50),
-                ),
-                const SizedBox(width: 10,),
-                GestureDetector(
-                  onTap: () async {
-                    setState(() {
-                      _isLoading = false;
-                    });
-                    final userCredential = await _auth.signInWithGoogle();
-                    if (userCredential != null) {
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Connexion avec Google annulée ou échouée')));
-                    }
-                    setState(() {
-                      _isLoading = false;
-                    });
-                  },
-                  child: Image.asset('assets/google.png', height: 50),
-                ),
-              ],
-            ),
-            SizedBox(height: 30,),
             MyElevatedButton(
-              buttonText: 'S\'inscrire',
+              buttonText: 'Sign Up',
               onPressed: () => _handleSignUp(false),
             ),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Vous avez déjà un compte ?'),
-                  MyTextButton(
-                    buttonText:'Se connecter',
-                    onPressed: () {
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignIn()));
-                    },
-                  ),])
           ],
+
         ),
       ),
     );
+
   }
 
   Widget _buildMerchantForm() {
@@ -307,81 +190,60 @@ class _SignUpState extends State<SignUp> {
           children: <Widget>[
             Text('Commerçant', style: Theme.of(context).textTheme.headline5),
             SizedBox(height: 20),
-
             MyTextFormField(
-              hintText: 'Nom',
-              onSaved: (input) => _merchantName = input,
-              validator: (input) => input != null && input.isNotEmpty ? null : 'Veuillez entrer un nom',
+              controller: _merchantNameController,
+              hintText: 'Name',
+              validator: (input) => input != null && input.isNotEmpty ? null : 'Please enter a name',
             ),
             SizedBox(height: 20),
             MyTextFormField(
+              controller: _merchantEmailController,
               hintText: 'Email',
-              onSaved: (input) => _merchantEmail = input,
-              validator: (input) => input != null && input.isNotEmpty ? null : 'Veuillez entrer une adresse e-mail',
+              validator: (input) => input != null && input.isNotEmpty ? null : 'Please enter an email',
             ),
             SizedBox(height: 20),
             MyTextFormField(
-              hintText: 'Numéro de téléphone',
-              onSaved: (input) => _merchantPhoneNumber = input,
-              validator: (input) {
-                if (input == null || input.isEmpty) {
-                  return 'Veuillez entrer un numéro de téléphone';
-                }
-                if (input.length != 8) {
-                  return 'Le numéro de téléphone doit comporter 8 chiffres';
-                }
-                return null;
-              },
-              //inputFormatters: [],
+              controller: _merchantPhoneController,
+              hintText: 'Phone Number',
+              validator: (input) => input != null && input.isNotEmpty ? null : 'Please enter a phone number',
             ),
             SizedBox(height: 20),
-
             MyTextFormField(
-              hintText: 'Numéro fiscal',
-              onSaved: (input) => _merchantFiscalNumber = input,
-              validator: (input) => input != null && input.isNotEmpty ? null : 'Veuillez entrer un numéro fiscal',
+              controller: _merchantFiscalController,
+              hintText: 'Fiscal Number',
+              validator: (input) => input != null && input.isNotEmpty ? null : 'Please enter a fiscal number',
             ),
             SizedBox(height: 20),
-
             MyTextFormField(
               controller: _merchantPasswordController,
-              hintText: 'Mot de passe',
+              hintText: 'Password',
               obscureText: true,
-              validator: (input) => input != null && input.length >= 6 ? null : 'Le mot de passe doit comporter au moins 6 caractères',
+              validator: (input) => input != null && input.length >= 6 ? null : 'Password must be at least 6 characters',
             ),
             SizedBox(height: 20),
             MyTextFormField(
-              hintText: 'Confirmer le mot de passe',
+              controller: _merchantConfirmPasswordController,
+              hintText: 'Confirm Password',
               obscureText: true,
-              validator: (input) => input == _merchantPasswordController.text ? null : 'Les mots de passe ne correspondent pas',
+              validator: (input) => input != null && input == _merchantPasswordController.text ? null : 'Passwords do not match',
             ),
             SizedBox(height: 20),
-            MyTextButton(buttonText: 'Télécharger les images de pièce d\'identité et de carte fiscale',
-              onPressed: pickImages,
+            TextButton(
+              onPressed: _pickImages,
+              child: Text('Upload ID and Fiscal Card'),
             ),
-            SizedBox(height: 10,),
-            buildImagePreview(_idCardImage),
-            SizedBox(height: 5,),
-            buildImagePreview(_fiscalCardImage),
+            _idCardImage != null ? Text(_idCardImage!.path.split('/').last) : SizedBox(),
+            _fiscalCardImage != null ? Text(_fiscalCardImage!.path.split('/').last) : SizedBox(),
             SizedBox(height: 20),
             MyElevatedButton(
-              buttonText: 'S\'inscrire',
+              buttonText: 'Sign Up',
               onPressed: () => _handleSignUp(true),
             ),
-            SizedBox(height: 20,),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Vous avez déjà un compte ?'),
-                  MyTextButton(
-                    buttonText:'Se connecter',
-                    onPressed: () {
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignIn()));
-                    },
-                  ),])
           ],
         ),
       ),
     );
   }
+
 }
+

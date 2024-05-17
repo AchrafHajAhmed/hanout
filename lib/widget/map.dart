@@ -4,18 +4,19 @@ import 'package:location/location.dart';
 import 'dart:async';
 import 'package:geolocator/geolocator.dart' as geolocator;
 
-class Map extends StatefulWidget {
+class CustomMap extends StatefulWidget {
   final double height;
   final double screenWidth;
+  final Set<Marker> markers;
 
-  Map({Key? key, required this.height, required this.screenWidth})
+  CustomMap({Key? key, required this.height, required this.screenWidth, required this.markers})
       : super(key: key);
 
   @override
-  _MapState createState() => _MapState();
+  _CustomMapState createState() => _CustomMapState();
 }
 
-class _MapState extends State<Map> {
+class _CustomMapState extends State<CustomMap> {
   final Completer<GoogleMapController> _controller = Completer();
   final Location _location = Location();
   late GoogleMapController mapController;
@@ -60,7 +61,6 @@ class _MapState extends State<Map> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
     return Container(
       height: widget.height,
       width: widget.screenWidth,
@@ -76,6 +76,7 @@ class _MapState extends State<Map> {
         },
         myLocationEnabled: true,
         myLocationButtonEnabled: true,
+        markers: widget.markers,
       ),
     );
   }

@@ -42,7 +42,7 @@ class _SignInState extends State<SignIn> {
             ],
             SizedBox(height: 20),
             const Text(
-              'Se connecter',
+              'Sign In',
               style: TextStyle(
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.w900,
@@ -54,7 +54,6 @@ class _SignInState extends State<SignIn> {
               hintText: 'Email',
               controller: emailController,
             ),
-
             SizedBox(height: 20),
             MyTextFormField(
               hintText: 'Mot de passe',
@@ -64,14 +63,14 @@ class _SignInState extends State<SignIn> {
             Align(
               alignment: Alignment.centerLeft,
               child: MyTextButton(
-                buttonText: 'Mot de passe oublié ?',
+                buttonText: 'Forget Your Password?',
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => ResetPasswordPage()));
                 },
               ),
             ),
             Text(
-              'OU',
+              'OR',
               style: TextStyle(
                 color: Color(0xFF757373),
                 fontFamily: 'Roboto',
@@ -91,7 +90,7 @@ class _SignInState extends State<SignIn> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text('Se connecter avec'),
+                  child: Text('Sign In Using'),
                 ),
                 Expanded(
                   child: Divider(
@@ -108,17 +107,20 @@ class _SignInState extends State<SignIn> {
                 GestureDetector(
                   onTap: () async {
                     setState(() {
-                      _isLoading = false;
+                      _isLoading = true;
                     });
-                    final userCredential = await _auth.signInWithFacebook();
-                    if (userCredential != null) {
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Connexion avec Facebook annulée ou échouée')));
+                    try {
+                      final userCredential = await _auth.signInWithFacebook();
+                      if (userCredential != null) {
+                        await _redirectToProperPage();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Facebook Sign-In cancelled or failed')));
+                      }
+                    } finally {
+                      setState(() {
+                        _isLoading = false;
+                      });
                     }
-                    setState(() {
-                      _isLoading = false;
-                    });
                   },
                   child: Image.asset('assets/facebook.png', height: 50),
                 ),
@@ -126,17 +128,20 @@ class _SignInState extends State<SignIn> {
                 GestureDetector(
                   onTap: () async {
                     setState(() {
-                      _isLoading = false;
+                      _isLoading = true;
                     });
-                    final userCredential = await _auth.signInWithGoogle();
-                    if (userCredential != null) {
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Connexion avec Google annulée ou échouée')));
+                    try {
+                      final userCredential = await _auth.signInWithGoogle();
+                      if (userCredential != null) {
+                        await _redirectToProperPage();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Google Sign-In cancelled or failed')));
+                      }
+                    } finally {
+                      setState(() {
+                        _isLoading = false;
+                      });
                     }
-                    setState(() {
-                      _isLoading = false;
-                    });
                   },
                   child: Image.asset('assets/google.png', height: 50),
                 ),
@@ -144,15 +149,15 @@ class _SignInState extends State<SignIn> {
             ),
             SizedBox(height: 20),
             MyElevatedButton(
-              buttonText: 'Connexion',
+              buttonText: 'Log In',
               onPressed: () async {
-                setState(() => _isLoading = false);
+                setState(() => _isLoading = true);
                 try {
                   await _auth.signInWithEmailAndPassword(
                     emailController.text.trim(),
                     passwordController.text.trim(),
                   );
-                  _redirectToProperPage();
+                  await _redirectToProperPage();
                 } on FirebaseAuthException catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur de connexion: ${e.message}')));
                 } finally {
@@ -163,9 +168,9 @@ class _SignInState extends State<SignIn> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Besoin d\'un compte ?') ,
+                Text('Need An Account? '),
                 MyTextButton(
-                  buttonText: 'Inscrivez-vous',
+                  buttonText: 'Sign Up',
                   onPressed: () {
                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignUp()));
                   },
@@ -177,6 +182,7 @@ class _SignInState extends State<SignIn> {
       ),
     );
   }
+
   Future<void> _redirectToProperPage() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -186,18 +192,19 @@ class _SignInState extends State<SignIn> {
       final userData = await userDoc.get();
       final merchantData = await merchantDoc.get();
 
-      if (userData.exists) {
-        if (merchantData.exists) {
-          final status = merchantData.get('status');
-          if (status == true) {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CommercantsMarket()));
-          } else {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MerchantVerificationPage()));
-          }
+      if (merchantData.exists) {
+        if (merchantData['status'] == false) {
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MerchantVerificationPage()));
         } else {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Localisation()));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CommercantsMarket()));
         }
+      } else if (userData.exists) {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Localisation()));
+      } else {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Localisation()));
       }
     }
   }
-}
+
+  }
+
