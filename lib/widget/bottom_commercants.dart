@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hanout/color.dart';
 //import 'package:hanout/screen/Commercants/Commercants_commands.dart';
 import 'package:hanout/Commercants/Commercant_market.dart';
-import 'package:hanout/screen/My_Account/My_Account.dart';
+import 'package:hanout/Commercants/Commercants account.dart';
 
 class CommercantsBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
@@ -25,7 +25,7 @@ class CommercantsBottomNavigationBar extends StatelessWidget {
       // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CommercantsCommands()));
         break;
       case 2:
-      // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CommercantsMarket()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CommercantAccount()));
         break;
       default:
         print('Unhandled tap');

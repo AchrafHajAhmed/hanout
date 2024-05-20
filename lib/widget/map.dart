@@ -1,16 +1,14 @@
+// lib/widget/custom_map.dart
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'dart:async';
-import 'package:geolocator/geolocator.dart' as geolocator;
 
 class CustomMap extends StatefulWidget {
   final double height;
   final double screenWidth;
-  final Set<Marker> markers;
 
-  CustomMap({Key? key, required this.height, required this.screenWidth, required this.markers})
-      : super(key: key);
+  CustomMap({Key? key, required this.height, required this.screenWidth}) : super(key: key);
 
   @override
   _CustomMapState createState() => _CustomMapState();
@@ -76,7 +74,6 @@ class _CustomMapState extends State<CustomMap> {
         },
         myLocationEnabled: true,
         myLocationButtonEnabled: true,
-        markers: widget.markers,
       ),
     );
   }

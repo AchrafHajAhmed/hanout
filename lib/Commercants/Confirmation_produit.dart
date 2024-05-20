@@ -3,6 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hanout/Commercants/Commercant_market.dart';
 import 'package:hanout/widget/elevated_button.dart';
+import 'package:hanout/color.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 
 class ConfirmModifications extends StatefulWidget {
   final Map<String, bool> modifiedProducts;
@@ -64,9 +67,10 @@ class _ConfirmModificationsState extends State<ConfirmModifications> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SafeArea(child: Scaffold(
       appBar: AppBar(
-        title: Text("Confirmer les Modifications"),
+      centerTitle: true,
+      title: Image.asset('assets/logo.png', height: 50),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -76,6 +80,7 @@ class _ConfirmModificationsState extends State<ConfirmModifications> {
       ),
       body: SafeArea(child:Column(
         children: [
+          _buildTopBar(context),
           Expanded(
             child: ListView.builder(
               itemCount: modifiedProductsDocs.length,
@@ -89,6 +94,7 @@ class _ConfirmModificationsState extends State<ConfirmModifications> {
                   trailing: Text(isAvailable ? 'Disponible' : 'Non disponible'),
                 );
               },
+
             ),
           ),
           Padding(
@@ -100,8 +106,30 @@ class _ConfirmModificationsState extends State<ConfirmModifications> {
           ),
         ],
       ),
-    ));
+    )));
+  }
+
+  Widget _buildTopBar(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      height: 69,
+      color: AppColors.primaryColor,
+      child: Row(
+        children: [
+          SvgPicture.asset('assets/Market.svg', height: 60),
+          SizedBox(width: 10),
+          Text(
+            'Confirm Produit',
+            style: TextStyle(
+              fontWeight: FontWeight.w900,
+              fontSize: 24.0,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
+
 
 

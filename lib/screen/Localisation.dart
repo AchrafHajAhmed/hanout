@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hanout/color.dart';
-import 'package:hanout/screen/acceuil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:hanout/color.dart';
+import 'package:hanout/screen/acceuil.dart';
 import 'package:hanout/widget/elevated_button.dart';
 import 'package:hanout/widget/map.dart';
 
@@ -13,14 +13,15 @@ class Localisation extends StatefulWidget {
 
 class _LocalisationState extends State<Localisation> {
   final TextEditingController _addressController = TextEditingController();
-  late double screenWidth;
 
   void _saveAddress() async {
     String? cityName = await getCityFromUserLocation();
     if (cityName != null) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => Acceuil(cityName: cityName)),
+        MaterialPageRoute(
+          builder: (context) => Acceuil(cityName: cityName),
+        ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -42,7 +43,10 @@ class _LocalisationState extends State<Localisation> {
                 MaterialPageRoute(builder: (context) => Acceuil(cityName: '')),
               );
             },
-            child: Text('Skip', style: TextStyle(color: AppColors.secondaryColor)),
+            child: Text(
+              'Skip',
+              style: TextStyle(color: AppColors.secondaryColor),
+            ),
           ),
         ],
       ),
@@ -64,7 +68,6 @@ class _LocalisationState extends State<Localisation> {
           CustomMap(
             height: MediaQuery.of(context).size.height * 3 / 5,
             screenWidth: MediaQuery.of(context).size.width,
-            markers: {},
           ),
           SizedBox(height: 20),
           MyElevatedButton(
@@ -88,9 +91,5 @@ Future<String?> getCityFromUserLocation() async {
     return null;
   }
 }
-
-
-
-
 
 

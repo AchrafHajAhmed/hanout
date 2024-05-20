@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hanout/screen/processus_de_commande/Panier.dart';
 import 'package:hanout/widget/bottom_navigation_bar.dart';
-import 'package:hanout/widget/map.dart'; // Assurez-vous que ceci pointe vers votre widget de carte personnalisé
+import 'package:hanout/widget/map.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:hanout/screen/processus_de_commande/commercants_produit.dart';  // Import CommercantProduitsPage
+import 'package:hanout/screen/processus_de_commande/order_item.dart';
+import 'package:hanout/color.dart';
 
 class Acceuil extends StatefulWidget {
   final String cityName;
@@ -19,6 +22,7 @@ class _AcceuilState extends State<Acceuil> {
   late String _cityName;
   Set<Marker> _markers = {};
   List<Map<String, dynamic>> _commercants = [];
+  List<OrderItem> _cartItems = [];
 
   @override
   void initState() {
@@ -28,6 +32,7 @@ class _AcceuilState extends State<Acceuil> {
   }
 
   void fetchCommercants() async {
+    // Fetch commercants from Firestore
     print('Fetching commercants...');
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('commercants').get();
     print('Total commercants fetched: ${querySnapshot.docs.length}');
@@ -50,8 +55,10 @@ class _AcceuilState extends State<Acceuil> {
         continue;
       }
 
-      // Fetch produit disponible for this commercant
-      QuerySnapshot productSnapshot = await FirebaseFirestore.instance.collection('produitdisponible').where('uid', isEqualTo: doc.id).get();
+      QuerySnapshot productSnapshot = await FirebaseFirestore.instance
+          .collection('produitdisponible')
+          .where('uid', isEqualTo: doc.id)
+          .get();
       String products = productSnapshot.docs.map((doc) {
         var productData = doc.data() as Map<String, dynamic>?;
         return productData?['name'] ?? '';
@@ -71,6 +78,7 @@ class _AcceuilState extends State<Acceuil> {
       );
 
       commercants.add({
+        'id': doc.id,
         'name': name,
         'latitude': latitude,
         'longitude': longitude,
@@ -89,33 +97,40 @@ class _AcceuilState extends State<Acceuil> {
     print('State updated. Total markers: ${_markers.length}, Total commercants: ${_commercants.length}');
   }
 
+  void _addToCart(OrderItem item) {
+    setState(() {
+      _cartItems.add(item);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Image.asset('assets/logo.png', height: 50),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.shopping_cart),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Panier(orderItems: _cartItems),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                IconButton(
-                  padding: EdgeInsets.only(right: 30),
-                  icon: Icon(Icons.shopping_cart, size: 35),
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => Panier()));
-                  },
-                ),
-              ],
-            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
                   Text(
                     _cityName,
                     style: TextStyle(
@@ -123,14 +138,55 @@ class _AcceuilState extends State<Acceuil> {
                       fontSize: 20,
                     ),
                   ),
+                  Icon(Icons.arrow_drop_down),
                 ],
               ),
             ),
-            CustomMap(
-              height: 200,
-              screenWidth: MediaQuery.of(context).size.width,
-              markers: _markers,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Recherche produits, superettes, commercants',
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+              ),
             ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton.icon(
+                    icon: Icon(Icons.filter_list),
+                    label: Text('Trier'),
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
+                  ),
+                  SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: Text('La plus proche'),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
+                  ),
+                  SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: Text('Notes'),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
+                  ),
+                  SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: Text('Ouvrir'),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
+                  ),
+                ],
+              ),
+            ),
+            //CustomMap(), // Uncomment this if you have a CustomMap widget
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
@@ -138,11 +194,34 @@ class _AcceuilState extends State<Acceuil> {
               itemBuilder: (context, index) {
                 final commercant = _commercants[index];
                 return ListTile(
+                  leading: Icon(Icons.storefront_outlined, color: AppColors.secondaryColor, size: 70),
                   title: Text(commercant['name']),
-                  subtitle: Text(commercant['products']),
+                  subtitle: Text('${commercant['products']}'),
+                  trailing: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('4.2', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+                      Text('notes', style: TextStyle(color: Colors.red)),
+                    ],
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CommercantProduitsPage(
+                          commercantId: commercant['id'],
+                          commercantName: commercant['name'],
+                          addToCart: _addToCart,
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
             ),
+
+
+
           ],
         ),
       ),
@@ -153,6 +232,3 @@ class _AcceuilState extends State<Acceuil> {
     );
   }
 }
-
-
-

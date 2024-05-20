@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:hanout/color.dart';
 import 'package:hanout/screen/processus_de_commande/Confirmation localisation.dart';
-import 'package:hanout/screen/processus_de_commande/Chekout.dart';
+import 'package:hanout/screen/processus_de_commande/Methode_de_Paiement.dart'; // Ensure the correct path
 import 'package:hanout/widget/elevated_button.dart';
+import 'order_item.dart'; // Ensure this path is correct
 
 class MethodeDeLivraison extends StatefulWidget {
   final String orderId;
   final double totalAchat;
+  final List<OrderItem> orderItems; // Add orderItems parameter
 
-  MethodeDeLivraison({Key? key, required this.orderId, required this.totalAchat}) : super(key: key);
+  MethodeDeLivraison({
+    Key? key,
+    required this.orderId,
+    required this.totalAchat,
+    required this.orderItems, // Initialize orderItems
+  }) : super(key: key);
 
   @override
   _MethodeDeLivraisonState createState() => _MethodeDeLivraisonState();
@@ -65,44 +72,51 @@ class _MethodeDeLivraisonState extends State<MethodeDeLivraison> {
               activeColor: AppColors.secondaryColor,
             ),
           ),
-
         ],
       ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.all(40.0),
-          child: MyElevatedButton(buttonText: 'Confirm', onPressed: () {
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(40.0),
+        child: MyElevatedButton(
+          buttonText: 'Confirm',
+          onPressed: () {
             if (_deliveryMethod == 'delivery') {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ConfirmationLocalisation(),
-            ),
+                MaterialPageRoute(builder: (context) => ConfirmationLocalisation()),
               ).then((deliveryCost) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => TotalCostScreen(
-                  totalAchat: widget.totalAchat,
-                  livraison: deliveryCost ?? 0,
-                ),
-              ),
-            );
-          });
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MethodeDePaiement(
+                      orderId: widget.orderId,
+                      totalAchat: widget.totalAchat,
+                      livraison: deliveryCost ?? 0,
+                      orderItems: widget.orderItems, // Pass orderItems here
+                    ),
+                  ),
+                );
+              });
             } else {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-              builder: (context) => TotalCostScreen(
-                totalAchat: widget.totalAchat,
-                livraison: 0,
-              ),
-            ),
-          );
-        }
-      },
+                  builder: (context) => MethodeDePaiement(
+                    orderId: widget.orderId,
+                    totalAchat: widget.totalAchat,
+                    livraison: 0,
+                    orderItems: widget.orderItems, // Pass orderItems here
+                  ),
+                ),
+              );
+            }
+          },
+        ),
       ),
-    ));
+    );
   }
 }
+
+
 
 

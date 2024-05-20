@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hanout/color.dart';
 import 'package:hanout/Commercants/Confirmation_produit.dart';
 import 'package:hanout/widget/elevated_button.dart';
@@ -55,7 +54,7 @@ class _AjouterProduitState extends State<AjouterProduit> {
   Widget build(BuildContext context) {
     return SafeArea(child:
         Scaffold(
-      appBar: AppBar(
+       appBar: AppBar(
         centerTitle: true,
         title: Image.asset('assets/logo.png', height: 50),
         leading: IconButton(
@@ -67,8 +66,8 @@ class _AjouterProduitState extends State<AjouterProduit> {
       ),
       body: Column(
         children: [
-          _buildSearchBar(),
           _buildTopBar(context),
+          _buildSearchBar(),
           _buildCategoryFilter(),
           _buildSubCategoryFilter(),
           Expanded(

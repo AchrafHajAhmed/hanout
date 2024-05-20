@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hanout/screen/processus_de_commande/calcul distance.dart';
-import 'package:hanout/widget/map.dart'; // Assurez-vous que cela pointe vers votre widget de carte personnalisé
 import 'package:hanout/widget/elevated_button.dart';
+
+import '../../widget/map.dart';
+
 
 class ConfirmationLocalisation extends StatefulWidget {
   @override
@@ -11,7 +13,7 @@ class ConfirmationLocalisation extends StatefulWidget {
 
 class _ConfirmationLocalisationState extends State<ConfirmationLocalisation> {
   DistanceCalculator? _distanceCalculator;
-  bool _isLoading = true;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -40,10 +42,7 @@ class _ConfirmationLocalisationState extends State<ConfirmationLocalisation> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Image.asset(
-          'assets/logo.png',
-          height: 50,
-        ),
+        title: Image.asset('assets/logo.png', height: 50),
       ),
       body: Column(
         children: [
@@ -63,11 +62,7 @@ class _ConfirmationLocalisationState extends State<ConfirmationLocalisation> {
                 SizedBox(height: 20),
                 TextField(),
                 SizedBox(height: 5),
-                CustomMap( // Utilisez votre widget de carte personnalisé ici
-                  height: MediaQuery.of(context).size.height * 3 / 5,
-                  screenWidth: MediaQuery.of(context).size.width,
-                  markers: {}, // Passez les marqueurs appropriés si nécessaire
-                ),
+                CustomMap (height: MediaQuery.of(context).size.height * 3 / 5, screenWidth: MediaQuery.of(context).size.width), // Updated
               ],
             ),
         ],
@@ -80,10 +75,10 @@ class _ConfirmationLocalisationState extends State<ConfirmationLocalisation> {
           onPressed: () {
             if (_distanceCalculator != null) {
               double deliveryCost = _distanceCalculator!.calculateCost(
-                _distanceCalculator!.calculateDistance(
-                  _distanceCalculator!.marchands[0]['latitude'],
-                  _distanceCalculator!.marchands[0]['longitude'],
-                ),
+                  _distanceCalculator!.calculateDistance(
+                    _distanceCalculator!.marchands[0]['latitude'],
+                    _distanceCalculator!.marchands[0]['longitude'],
+                  )
               );
               Navigator.pop(context, deliveryCost);
             }
@@ -93,5 +88,6 @@ class _ConfirmationLocalisationState extends State<ConfirmationLocalisation> {
     );
   }
 }
+
 
 

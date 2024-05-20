@@ -1,22 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hanout/screen/Favoris.dart';
 import 'package:hanout/screen/authentification/log_in.dart';
-import 'package:hanout/widget/bottom_navigation_bar.dart';
-import 'package:hanout/screen/My_Account/Commande.dart';
+import 'package:hanout/widget/bottom_commercants.dart';
 import 'package:hanout/screen/My_Account/Parametre.dart';
 import 'package:hanout/color.dart';
 
-class MyAccount extends StatefulWidget {
+class CommercantAccount extends StatefulWidget {
   @override
-  _MyAccountState createState() => _MyAccountState();
+  _CommercantAccountState createState() => _CommercantAccountState();
 }
 
-class _MyAccountState extends State<MyAccount> {
+class _CommercantAccountState extends State<CommercantAccount> {
+  int _selectedIndex = 2;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   String userEmail = '';
   String userName = '';
-  bool isPaymentButtonClicked = false;
+  bool isPaymentButtonClicked = true;
 
   @override
   void initState() {
@@ -33,7 +39,7 @@ class _MyAccountState extends State<MyAccount> {
       });
 
       FirebaseFirestore firestore = FirebaseFirestore.instance;
-      DocumentSnapshot userData = await firestore.collection('users').doc(user.uid).get();
+      DocumentSnapshot userData = await firestore.collection('commercants').doc(user.uid).get();
       setState(() {
         Map<String, dynamic>? data = userData.data() as Map<String, dynamic>?;
         if (data != null) {
@@ -43,16 +49,19 @@ class _MyAccountState extends State<MyAccount> {
     }
   }
 
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Image.asset('assets/logo.png', height: 50),
-      ),
-      body: buildUserInfo(),
-      bottomNavigationBar: MyBottomNavigationBar(
-        currentIndex: 3,
-        onItemSelected: (index) {},
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Image.asset('assets/logo.png', height: 50),
+        ),
+        body: buildUserInfo(),
+        bottomNavigationBar: CommercantsBottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onItemSelected: _onItemTapped,
+        ),
       ),
     );
   }
@@ -71,68 +80,62 @@ class _MyAccountState extends State<MyAccount> {
               borderRadius: BorderRadius.circular(10.0),
             ),
             child: ListTile(
-              title: Text('$userName',
-                  style: TextStyle(color: AppColors.secondaryColor,
-                    fontFamily: 'Roboto',
-                    fontWeight: FontWeight.w900,
-                    fontSize: 16,)),
-              subtitle: Text('$userEmail',
-                  style: TextStyle(color: AppColors.thirdColor,
-                    fontFamily: 'Roboto',
-                    fontWeight: FontWeight.w900,
-                    fontSize: 13,)
+              title: Text(
+                '$userName',
+                style: TextStyle(
+                  color: AppColors.secondaryColor,
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.w900,
+                  fontSize: 16,
+                ),
               ),
-              trailing: Icon(Icons.account_circle_outlined, size: 40,
-                color: AppColors.primaryColor,),
+              subtitle: Text(
+                '$userEmail',
+                style: TextStyle(
+                  color: AppColors.thirdColor,
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.w900,
+                  fontSize: 13,
+                ),
+              ),
+              trailing: Icon(
+                Icons.account_circle_outlined,
+                size: 40,
+                color: AppColors.primaryColor,
+              ),
             ),
           ),
         ),
+        SizedBox(height: 20),
+        buildListTile(
+          context,
+          icon: Icons.manage_accounts_outlined,
+          title: 'Parametres',
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Parametre()));
+          },
+        ),
         SizedBox(height: 10,),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              buildIconButton(context, Icons.favorite_outline, () {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Favori()));
-              }),
-              buildIconButton(context, Icons.notifications_active_outlined, () {}),
-              buildIconButton(context, Icons.manage_accounts_outlined, () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => Parametre()));
-              }),
-              buildIconButton(context, Icons.payment_outlined, () {}),
-
-
-            ],
-          ),
+        buildListTile(
+          context,
+          icon: Icons.info_outline,
+          title: 'À propos',
+          onTap: () {},
         ),
-        ListTile(
-          leading: Icon(Icons.list,
-            color: AppColors.thirdColor,),
-          title: Text('Mes commandes'),
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Commande()));
-          },
+        SizedBox(height: 10,),
+        buildListTile(
+          context,
+          icon: Icons.help_outline,
+          title: 'Aide et FAQ',
+          onTap: () {},
         ),
-        ListTile(
-          leading: Icon(Icons.info_outline,
-            color: AppColors.thirdColor,),
-          title: Text('À propos'),
+        SizedBox(height: 10,),
+        buildListTile(
+          context,
+          icon: Icons.exit_to_app,
+          title: 'Se déconnecter',
           onTap: () {
-          },
-        ),
-        ListTile(
-          leading: Icon(Icons.help_outline,
-            color: AppColors.thirdColor,),
-          title: Text('Aide et FAQ'),
-          onTap: () {
-          },
-        ),
-        ListTile(
-          leading: Icon(Icons.exit_to_app,
-            color: AppColors.thirdColor,),
-          title: Text('Se déconnecter'),
-          onTap: () {
+            FirebaseAuth.instance.signOut();
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignIn()));
           },
         ),
@@ -142,19 +145,23 @@ class _MyAccountState extends State<MyAccount> {
     );
   }
 
-  Widget buildIconButton(BuildContext context, IconData icon, VoidCallback onPressed) {
-    return Container(
-      width: 70,
-      height: 69,
-      decoration: BoxDecoration(
-          color: AppColors.primaryColor,
-          borderRadius: BorderRadius.circular(5.0)),
-      child: IconButton(
-        icon: Icon(icon, color: AppColors.thirdColor,),
-        onPressed: onPressed,
+  Widget buildListTile(BuildContext context, {required IconData icon, required String title, required VoidCallback onTap}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.yellow,
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: ListTile(
+          leading: Icon(icon, color: AppColors.thirdColor),
+          title: Text(title),
+          onTap: onTap,
+        ),
       ),
     );
   }
 }
+
 
 

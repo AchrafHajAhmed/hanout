@@ -8,6 +8,16 @@ import 'package:hanout/screen/My_Account/Commande.dart';
 import 'package:hanout/screen/My_Account/Parametre.dart';
 import 'package:hanout/color.dart';
 
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hanout/screen/Favoris.dart';
+import 'package:hanout/screen/authentification/log_in.dart';
+import 'package:hanout/widget/bottom_navigation_bar.dart';
+import 'package:hanout/screen/My_Account/Commande.dart';
+import 'package:hanout/screen/My_Account/Parametre.dart';
+import 'package:hanout/color.dart';
+
 class MyAccount extends StatefulWidget {
   @override
   _MyAccountState createState() => _MyAccountState();
@@ -17,6 +27,7 @@ class _MyAccountState extends State<MyAccount> {
   String userEmail = '';
   String userName = '';
   bool isPaymentButtonClicked = false;
+  String orderId = 'example-order-id'; // Example order ID
 
   @override
   void initState() {
@@ -43,6 +54,7 @@ class _MyAccountState extends State<MyAccount> {
     }
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -72,68 +84,86 @@ class _MyAccountState extends State<MyAccount> {
             ),
             child: ListTile(
               title: Text('$userName',
-                  style: TextStyle(color: AppColors.secondaryColor,
+                  style: TextStyle(
+                    color: AppColors.secondaryColor,
                     fontFamily: 'Roboto',
                     fontWeight: FontWeight.w900,
-                    fontSize: 16,)),
+                    fontSize: 16,
+                  )),
               subtitle: Text('$userEmail',
-                  style: TextStyle(color: AppColors.thirdColor,
+                  style: TextStyle(
+                    color: AppColors.thirdColor,
                     fontFamily: 'Roboto',
                     fontWeight: FontWeight.w900,
-                    fontSize: 13,)
+                    fontSize: 13,
+                  )),
+              trailing: Icon(
+                Icons.account_circle_outlined,
+                size: 40,
+                color: AppColors.primaryColor,
               ),
-              trailing: Icon(Icons.account_circle_outlined, size: 40,
-                color: AppColors.primaryColor,),
             ),
           ),
         ),
-        SizedBox(height: 10,),
+        SizedBox(height: 10),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               buildIconButton(context, Icons.favorite_outline, () {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Favori()));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => Favori()));
               }),
               buildIconButton(context, Icons.notifications_active_outlined, () {}),
               buildIconButton(context, Icons.manage_accounts_outlined, () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => Parametre()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Parametre()));
               }),
               buildIconButton(context, Icons.payment_outlined, () {}),
-
-
             ],
           ),
         ),
         ListTile(
-          leading: Icon(Icons.list,
-            color: AppColors.thirdColor,),
+          leading: Icon(
+            Icons.list,
+            color: AppColors.thirdColor,
+          ),
           title: Text('Mes commandes'),
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Commande()));
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Commande(orderId: orderId), // Pass the orderId here
+              ),
+            );
           },
         ),
         ListTile(
-          leading: Icon(Icons.info_outline,
-            color: AppColors.thirdColor,),
+          leading: Icon(
+            Icons.info_outline,
+            color: AppColors.thirdColor,
+          ),
           title: Text('À propos'),
-          onTap: () {
-          },
+          onTap: () {},
         ),
         ListTile(
-          leading: Icon(Icons.help_outline,
-            color: AppColors.thirdColor,),
+          leading: Icon(
+            Icons.help_outline,
+            color: AppColors.thirdColor,
+          ),
           title: Text('Aide et FAQ'),
-          onTap: () {
-          },
+          onTap: () {},
         ),
         ListTile(
-          leading: Icon(Icons.exit_to_app,
-            color: AppColors.thirdColor,),
+          leading: Icon(
+            Icons.exit_to_app,
+            color: AppColors.thirdColor,
+          ),
           title: Text('Se déconnecter'),
           onTap: () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignIn()));
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => SignIn()));
           },
         ),
         SizedBox(height: 50),
@@ -142,7 +172,8 @@ class _MyAccountState extends State<MyAccount> {
     );
   }
 
-  Widget buildIconButton(BuildContext context, IconData icon, VoidCallback onPressed) {
+  Widget buildIconButton(
+      BuildContext context, IconData icon, VoidCallback onPressed) {
     return Container(
       width: 70,
       height: 69,
@@ -150,11 +181,15 @@ class _MyAccountState extends State<MyAccount> {
           color: AppColors.primaryColor,
           borderRadius: BorderRadius.circular(5.0)),
       child: IconButton(
-        icon: Icon(icon, color: AppColors.thirdColor,),
+        icon: Icon(
+          icon,
+          color: AppColors.thirdColor,
+        ),
         onPressed: onPressed,
       ),
     );
   }
 }
+
 
 
