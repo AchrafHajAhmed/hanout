@@ -115,7 +115,7 @@ class _AcceuilState extends State<Acceuil> {
                     ],
                   ),
                   IconButton(
-                    icon: Icon(Icons.shopping_cart, size:25,),
+                    icon: Icon(Icons.shopping_cart, size:30,),
                     onPressed: () {
                       Navigator.push(
                         context,
