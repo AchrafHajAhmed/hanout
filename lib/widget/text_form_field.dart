@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class MyTextFormField extends StatefulWidget {
   final String hintText;
@@ -6,14 +7,19 @@ class MyTextFormField extends StatefulWidget {
   final FormFieldValidator<String>? validator;
   final ValueChanged<String?>? onSaved;
   final bool obscureText;
+  final List<TextInputFormatter>? inputFormatters;
+  final int maxLength;
+
 
   const MyTextFormField({
     Key? key,
     required this.hintText,
     this.controller,
     this.validator,
+    this.inputFormatters,
     this.onSaved,
     this.obscureText = false,
+    this.maxLength = 8,
   }) : super(key: key);
 
   @override
@@ -76,4 +82,6 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
     );
   }
 }
+
+
 

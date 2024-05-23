@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hanout/color.dart';
-import 'package:hanout/screen/Favoris.dart';
-import 'package:hanout/screen/My_Account/My_Account.dart';
-import 'package:hanout/screen/acceuil.dart';
+import 'package:hanout/Commercants/Commercant_market.dart';
+import 'package:hanout/Commercants/Commercants account.dart';
+import 'package:hanout/Commercants/ListeDeCommande.dart';
 
-
-class MyBottomNavigationBar extends StatelessWidget {
+class CommercantsBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onItemSelected;
 
-  const MyBottomNavigationBar({
+  const CommercantsBottomNavigationBar({
     Key? key,
     required this.currentIndex,
     required this.onItemSelected,
@@ -20,13 +19,13 @@ class MyBottomNavigationBar extends StatelessWidget {
 
     switch (index) {
       case 0:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CommercantsMarket()));
         break;
       case 1:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Favori()));
+       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ListeCommande()));
         break;
       case 2:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyAccount()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CommercantAccount()));
         break;
       default:
         print('Unhandled tap');
@@ -37,6 +36,7 @@ class MyBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
+        color: Colors.white,
         border: Border(
           top: BorderSide(
             color: Color(0xFFEEEEEE),
@@ -48,16 +48,16 @@ class MyBottomNavigationBar extends StatelessWidget {
         backgroundColor: Colors.white,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: currentIndex == 0 ? AppColors.primaryColor : AppColors.thirdColor),
-            label: 'Accueil',
+            icon: Icon(Icons.storefront_outlined, color: currentIndex == 0 ? AppColors.primaryColor : AppColors.thirdColor),
+            label: 'Market',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_outline, color: currentIndex == 1 ? AppColors.primaryColor : AppColors.thirdColor),
-            label: 'Favoris',
+            icon: Icon(Icons.list, color: currentIndex == 1 ? AppColors.primaryColor : AppColors.thirdColor),
+            label: 'Commandes',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle_outlined, color: currentIndex == 2 ? AppColors.primaryColor : AppColors.thirdColor),
-            label: 'Mon compte',
+            label: 'Account',
           ),
         ],
         currentIndex: currentIndex,
@@ -68,4 +68,3 @@ class MyBottomNavigationBar extends StatelessWidget {
     );
   }
 }
-

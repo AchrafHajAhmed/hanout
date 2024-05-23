@@ -72,6 +72,9 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:30.2.0')
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.facebook.android:facebook-login:latest.release'
+    implementation 'com.google.firebase:firebase-messaging:21.1.0'
+    implementation 'com.pusher:push-notifications-android:1.9.0'
+
 
 
 }

@@ -10,6 +10,7 @@ void main() async {
       appId: '1:933084221712:android:2683898f417ab0186a5595',
       messagingSenderId: '933084221712',
       projectId: 'hanout-a372e',
+        storageBucket: 'hanout-a372e.appspot.com',
     ),
   );
   runApp(splashscreenApp());

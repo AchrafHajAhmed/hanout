@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:hanout/color.dart';
 import 'package:hanout/screen/processus_de_commande/Confirmation localisation.dart';
-import 'package:hanout/screen/processus_de_commande/Chekout.dart';
+import 'package:hanout/screen/processus_de_commande/Methode_de_Paiement.dart';
 import 'package:hanout/widget/elevated_button.dart';
+import 'order_item.dart';
 
 class MethodeDeLivraison extends StatefulWidget {
   final String orderId;
   final double totalAchat;
+  final List<OrderItem> orderItems;
+  final String commercantUid;
 
-  MethodeDeLivraison({Key? key, required this.orderId, required this.totalAchat}) : super(key: key);
+  MethodeDeLivraison({
+    Key? key,
+    required this.orderId,
+    required this.totalAchat,
+    required this.orderItems,
+    required this.commercantUid,
+  }) : super(key: key);
 
   @override
   _MethodeDeLivraisonState createState() => _MethodeDeLivraisonState();
@@ -48,7 +58,7 @@ class _MethodeDeLivraisonState extends State<MethodeDeLivraison> {
                   _deliveryMethod = value!;
                 });
               },
-              activeColor: Colors.red,
+              activeColor: AppColors.secondaryColor,
             ),
           ),
           ListTile(
@@ -61,48 +71,55 @@ class _MethodeDeLivraisonState extends State<MethodeDeLivraison> {
                   _deliveryMethod = value!;
                 });
               },
-              activeColor: Colors.red,
+              activeColor: AppColors.secondaryColor,
             ),
           ),
-
         ],
       ),
-    floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-    floatingActionButton: Padding(
-    padding: const EdgeInsets.all(40.0),
-    child: MyElevatedButton(buttonText: 'Confirm', onPressed: () {
-        if (_deliveryMethod == 'delivery') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ConfirmationLocalisation(),
-            ),
-          ).then((deliveryCost) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => TotalCostScreen(
-                  totalAchat: widget.totalAchat,
-                  livraison: deliveryCost ?? 0,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(40.0),
+        child: MyElevatedButton(
+          buttonText: 'Confirmer',
+          onPressed: () {
+            if (_deliveryMethod == 'delivery') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ConfirmationLocalisation()),
+              ).then((deliveryCost) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MethodeDePaiement(
+                      orderId: widget.orderId,
+                      totalAchat: widget.totalAchat,
+                      livraison: deliveryCost ?? 0,
+                      orderItems: widget.orderItems,
+                      commercantUid: widget.commercantUid,
+                    ),
+                  ),
+                );
+              });
+            } else {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MethodeDePaiement(
+                    orderId: widget.orderId,
+                    totalAchat: widget.totalAchat,
+                    livraison: 0,
+                    orderItems: widget.orderItems,
+                    commercantUid: widget.commercantUid,
+                  ),
                 ),
-              ),
-            );
-          });
-        } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => TotalCostScreen(
-                totalAchat: widget.totalAchat,
-                livraison: 0,
-              ),
-            ),
-          );
-        }
-      },
+              );
+            }
+          },
+        ),
       ),
-    ));
+    );
   }
 }
+
 
 

@@ -41,6 +41,7 @@ dependencies:
 
 
 
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
@@ -55,6 +56,23 @@ dependencies:
   geocoding: ^3.0.0
   firebase_database: ^10.5.2
   flutter_google_maps_webservices: ^1.1.1
+  flutter_svg: ^2.0.10+1
+  page_view_dot_indicator: ^2.3.0
+  firebase_storage: ^11.7.4
+  image_picker: ^1.1.1
+  cached_network_image: ^3.3.1
+  video_player: ^2.8.6
+  file_picker: ^8.0.3
+  permission_handler: ^11.3.1
+  flutter_chat_ui: ^1.6.12
+  image_gallery_saver:
+    git:
+      url: https://github.com/knottx/image_gallery_saver.git
+      ref: knottx-latest
+  firebase_messaging: ^14.9.3
+  onesignal_flutter: ^5.2.0
+  pusher_beams: ^1.1.1
+  beamer: ^1.6.1
 
 
 dev_dependencies:
@@ -85,9 +103,20 @@ flutter:
    - assets/google.png
    - assets/facebook.png
    - assets/Roboto-Black.ttf
+   - assets/Done.svg
+   - assets/upload.svg
+   - assets/verification.svg
+   - assets/refuse.svg
+   - assets/Market.svg
 
 
-    # An image asset can refer to one or more resolution-specific "variants", see
+
+
+
+
+
+
+     # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
   # For details regarding adding assets from package dependencies, see

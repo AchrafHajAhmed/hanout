@@ -19,7 +19,6 @@ class _ParametreState extends State<Parametre> {
 
   String _errorMessage = '';
 
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -28,27 +27,29 @@ class _ParametreState extends State<Parametre> {
       appBar: AppBar(
         centerTitle: true,
         title: Image.asset('assets/logo.png', height: 50),
-    ),
-
-    body: ListView(
+      ),
+      body: ListView(
         children: [
-          SizedBox(height: 20,),
+          SizedBox(height: 20),
           Container(
             width: screenWidth,
             height: 69,
             color: AppColors.primaryColor,
-            child: Row(children: [
-              SizedBox(width: 10),
-              Icon(Icons.manage_accounts_outlined, color: Colors.white,
-              size: 40,),
-              SizedBox(width: 10),
-              Text('Paramètre',
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.w900,
-                fontSize: 24.0,
-              ),),
-            ],),
+            child: Row(
+              children: [
+                SizedBox(width: 10),
+                Icon(Icons.manage_accounts_outlined, color: Colors.white, size: 40),
+                SizedBox(width: 10),
+                Text(
+                  'Paramètre',
+                  style: TextStyle(
+                    fontFamily: 'Roboto',
+                    fontWeight: FontWeight.w900,
+                    fontSize: 24.0,
+                  ),
+                ),
+              ],
+            ),
           ),
           SizedBox(height: 20),
           Padding(
@@ -58,38 +59,44 @@ class _ParametreState extends State<Parametre> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text('Nouveau Nom',
-                    style:  TextStyle(
+                  Text(
+                    'Nouveau Nom',
+                    style: TextStyle(
                       fontFamily: 'Roboto',
                       fontWeight: FontWeight.w900,
                       fontSize: 20.0,
-                    ),),
-                  SizedBox(height: 10,),
+                    ),
+                  ),
+                  SizedBox(height: 10),
                   MyTextFormField(
                     hintText: 'Nouveau Nom',
                     controller: _nameController,
                   ),
                   SizedBox(height: 20),
-                  Text('Nouveau Email',
-                    style:  TextStyle(
+                  Text(
+                    'Nouvel Email',
+                    style: TextStyle(
                       fontFamily: 'Roboto',
                       fontWeight: FontWeight.w900,
                       fontSize: 20.0,
-                    ),),
-                  SizedBox(height: 10,),
+                    ),
+                  ),
+                  SizedBox(height: 10),
                   MyTextFormField(
-                    hintText: 'Nouveau Email',
+                    hintText: 'Nouvel Email',
                     controller: _emailController,
                     validator: (value) => value!.isEmpty ? 'Veuillez entrer votre nouvel email' : null,
                   ),
                   SizedBox(height: 20),
-                  Text('Nouveau mot de passe',
-                    style:  TextStyle(
+                  Text(
+                    'Nouveau mot de passe',
+                    style: TextStyle(
                       fontFamily: 'Roboto',
                       fontWeight: FontWeight.w900,
                       fontSize: 20.0,
-                    ),),
-                  SizedBox(height: 10,),
+                    ),
+                  ),
+                  SizedBox(height: 10),
                   MyTextFormField(
                     hintText: 'Nouveau mot de passe',
                     controller: _passwordController,
@@ -97,13 +104,15 @@ class _ParametreState extends State<Parametre> {
                     validator: (value) => value!.isEmpty ? 'Veuillez entrer votre nouveau mot de passe' : null,
                   ),
                   SizedBox(height: 20),
-                  Text('Confirmez le nouveau mot de passe',
-                      style:  TextStyle(
+                  Text(
+                    'Confirmez le nouveau mot de passe',
+                    style: TextStyle(
                       fontFamily: 'Roboto',
                       fontWeight: FontWeight.w900,
                       fontSize: 20.0,
-                  ),),
-                  SizedBox(height: 10,),
+                    ),
+                  ),
+                  SizedBox(height: 10),
                   MyTextFormField(
                     hintText: 'Confirmez le nouveau mot de passe',
                     controller: _confirmPasswordController,
@@ -163,3 +172,4 @@ class _ParametreState extends State<Parametre> {
     }
   }
 }
+

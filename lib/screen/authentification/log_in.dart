@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hanout/screen/acceuil.dart';
 import 'package:hanout/screen/authentification/sign_up.dart';
 import 'package:hanout/widget/text_form_field.dart';
 import 'package:hanout/widget/elevated_button.dart';
@@ -8,6 +7,9 @@ import 'package:hanout/widget/text_button.dart';
 import 'package:hanout/screen/services/auth.dart';
 import 'package:hanout/screen/Rest_Password.dart';
 import 'package:hanout/screen/Localisation.dart';
+import 'package:hanout/Commercants/Commercants_no_verifier.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hanout/Commercants/Commercant_market.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -26,8 +28,7 @@ class _SignInState extends State<SignIn> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Image.asset('assets/logo.png',
-          height: 50,),
+        title: Image.asset('assets/logo.png', height: 50),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -35,13 +36,10 @@ class _SignInState extends State<SignIn> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            if (_isLoading) ...[
-              Center(child: CircularProgressIndicator()),
-            ],
             SizedBox(height: 20),
-            const Text (
-              'Sign In',
-              style:  TextStyle(
+            const Text(
+              'Connexion',
+              style: TextStyle(
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.w900,
                 fontSize: 32.0,
@@ -52,7 +50,6 @@ class _SignInState extends State<SignIn> {
               hintText: 'Email',
               controller: emailController,
             ),
-
             SizedBox(height: 20),
             MyTextFormField(
               hintText: 'Mot de passe',
@@ -62,19 +59,22 @@ class _SignInState extends State<SignIn> {
             Align(
               alignment: Alignment.centerLeft,
               child: MyTextButton(
-                buttonText: 'Forget Your Password?',
+                buttonText: 'Mot de passe oublié ?',
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => ResetPasswordPage()));
                 },
               ),
             ),
-            Text('OR',
-                style: TextStyle(color: Color(0xFF757373),
-                  fontFamily: 'Roboto',
-                  fontWeight: FontWeight.w900,
-                  fontSize: 16.0,
-                ),
-                textAlign: TextAlign.center),
+            Text(
+              'OU',
+              style: TextStyle(
+                color: Color(0xFF757373),
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.w900,
+                fontSize: 16.0,
+              ),
+              textAlign: TextAlign.center,
+            ),
             SizedBox(height: 20),
             const Row(
               children: <Widget>[
@@ -86,10 +86,9 @@ class _SignInState extends State<SignIn> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child:
-
-                      Text('Sign In Using')),
-                  Expanded(
+                  child: Text('Se connecter avec'),
+                ),
+                Expanded(
                   child: Divider(
                     thickness: 1,
                     color: Colors.grey,
@@ -97,44 +96,48 @@ class _SignInState extends State<SignIn> {
                 ),
               ],
             ),
-            SizedBox(height: 25,),
             SizedBox(height: 25),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
                   onTap: () async {
                     setState(() {
-                      _isLoading = false;
+                      _isLoading = true;
                     });
-                    final userCredential = await _auth.signInWithFacebook();
-                    if (userCredential != null) {
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Facebook Sign-In cancelled or failed')));
+                    try {
+                      final userCredential = await _auth.signInWithFacebook();
+                      if (userCredential != null) {
+                        await _redirectToProperPage();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Connexion Facebook annulée ou échouée')));
+                      }
+                    } finally {
+                      setState(() {
+                        _isLoading = false;
+                      });
                     }
-                    setState(() {
-                      _isLoading = false;
-                    });
                   },
                   child: Image.asset('assets/facebook.png', height: 50),
                 ),
-                const SizedBox(width: 10,),
+                const SizedBox(width: 10),
                 GestureDetector(
                   onTap: () async {
                     setState(() {
-                      _isLoading = false;
+                      _isLoading = true;
                     });
-                    final userCredential = await _auth.signInWithGoogle();
-                    if (userCredential != null) {
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Google Sign-In cancelled or failed')));
+                    try {
+                      final userCredential = await _auth.signInWithGoogle();
+                      if (userCredential != null) {
+                        await _redirectToProperPage();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Connexion Google annulée ou échouée')));
+                      }
+                    } finally {
+                      setState(() {
+                        _isLoading = false;
+                      });
                     }
-                    setState(() {
-                      _isLoading = false;
-                    });
                   },
                   child: Image.asset('assets/google.png', height: 50),
                 ),
@@ -142,35 +145,60 @@ class _SignInState extends State<SignIn> {
             ),
             SizedBox(height: 20),
             MyElevatedButton(
-              buttonText: 'Log In',
+              buttonText: 'Se connecter',
               onPressed: () async {
-                setState(() => _isLoading = false);
+                setState(() => _isLoading = true);
                 try {
                   await _auth.signInWithEmailAndPassword(
                     emailController.text.trim(),
                     passwordController.text.trim(),
                   );
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Localisation()));
+                  await _redirectToProperPage();
                 } on FirebaseAuthException catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur de connexion: ${e.message}')));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur de connexion : ${e.message}')));
                 } finally {
                   setState(() => _isLoading = false);
                 }
               },
             ),
             Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Need An Account? '),
-                  MyTextButton(
-                    buttonText:'Sign Up',
-                    onPressed: () {
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignUp()));
-                    },
-                  ),])
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Besoin d\'un compte ? '),
+                MyTextButton(
+                  buttonText: 'S\'inscrire',
+                  onPressed: () {
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignUp()));
+                  },
+                ),
+              ],
+            )
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _redirectToProperPage() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userDoc = FirebaseFirestore.instance.collection('users').doc(user.uid);
+      final merchantDoc = FirebaseFirestore.instance.collection('commercants').doc(user.uid);
+
+      final userData = await userDoc.get();
+      final merchantData = await merchantDoc.get();
+
+      if (merchantData.exists) {
+        if (merchantData['status'] == false) {
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MerchantVerificationPage()));
+        } else {
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CommercantsMarket()));
+        }
+      } else if (userData.exists) {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Localisation()));
+      } else {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Localisation()));
+      }
+    }
   }
 }

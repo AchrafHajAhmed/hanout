@@ -2,20 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'dart:async';
-import 'package:geolocator/geolocator.dart' as geolocator;
 
-class Map extends StatefulWidget {
+class MyMap extends StatefulWidget {
   final double height;
   final double screenWidth;
+  final Set<Marker> markers;
 
-  Map({Key? key, required this.height, required this.screenWidth})
-      : super(key: key);
+  MyMap({Key? key, required this.height, required this.screenWidth, required this.markers}) : super(key: key);
 
   @override
-  _MapState createState() => _MapState();
+  _MyMapState createState() => _MyMapState();
 }
 
-class _MapState extends State<Map> {
+class _MyMapState extends State<MyMap> {
   final Completer<GoogleMapController> _controller = Completer();
   final Location _location = Location();
   late GoogleMapController mapController;
@@ -60,7 +59,6 @@ class _MapState extends State<Map> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
     return Container(
       height: widget.height,
       width: widget.screenWidth,
@@ -70,6 +68,7 @@ class _MapState extends State<Map> {
           target: LatLng(0, 0),
           zoom: 10,
         ),
+        markers: widget.markers,
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
           mapController = controller;
@@ -80,3 +79,5 @@ class _MapState extends State<Map> {
     );
   }
 }
+
+
