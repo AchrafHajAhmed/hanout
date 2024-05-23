@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'screen/splash_screen.dart';
-import 'package:hanout/Commercants/Commercants_no_verifier.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

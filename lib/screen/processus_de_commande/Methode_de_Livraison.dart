@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:hanout/color.dart';
 import 'package:hanout/screen/processus_de_commande/Confirmation localisation.dart';
-import 'package:hanout/screen/processus_de_commande/Methode_de_Paiement.dart'; // Ensure the correct path
+import 'package:hanout/screen/processus_de_commande/Methode_de_Paiement.dart';
 import 'package:hanout/widget/elevated_button.dart';
-import 'order_item.dart'; // Ensure this path is correct
+import 'order_item.dart';
 
 class MethodeDeLivraison extends StatefulWidget {
   final String orderId;
   final double totalAchat;
-  final List<OrderItem> orderItems; // Add orderItems parameter
+  final List<OrderItem> orderItems;
+  final String commercantUid;
 
   MethodeDeLivraison({
     Key? key,
     required this.orderId,
     required this.totalAchat,
-    required this.orderItems, // Initialize orderItems
+    required this.orderItems,
+    required this.commercantUid,
   }) : super(key: key);
 
   @override
@@ -78,7 +80,7 @@ class _MethodeDeLivraisonState extends State<MethodeDeLivraison> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(40.0),
         child: MyElevatedButton(
-          buttonText: 'Confirm',
+          buttonText: 'Confirmer',
           onPressed: () {
             if (_deliveryMethod == 'delivery') {
               Navigator.push(
@@ -92,7 +94,8 @@ class _MethodeDeLivraisonState extends State<MethodeDeLivraison> {
                       orderId: widget.orderId,
                       totalAchat: widget.totalAchat,
                       livraison: deliveryCost ?? 0,
-                      orderItems: widget.orderItems, // Pass orderItems here
+                      orderItems: widget.orderItems,
+                      commercantUid: widget.commercantUid,
                     ),
                   ),
                 );
@@ -105,7 +108,8 @@ class _MethodeDeLivraisonState extends State<MethodeDeLivraison> {
                     orderId: widget.orderId,
                     totalAchat: widget.totalAchat,
                     livraison: 0,
-                    orderItems: widget.orderItems, // Pass orderItems here
+                    orderItems: widget.orderItems,
+                    commercantUid: widget.commercantUid,
                   ),
                 ),
               );
@@ -116,7 +120,6 @@ class _MethodeDeLivraisonState extends State<MethodeDeLivraison> {
     );
   }
 }
-
 
 
 

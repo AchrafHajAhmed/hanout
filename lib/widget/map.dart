@@ -1,20 +1,20 @@
-// lib/widget/custom_map.dart
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'dart:async';
 
-class CustomMap extends StatefulWidget {
+class MyMap extends StatefulWidget {
   final double height;
   final double screenWidth;
+  final Set<Marker> markers;
 
-  CustomMap({Key? key, required this.height, required this.screenWidth}) : super(key: key);
+  MyMap({Key? key, required this.height, required this.screenWidth, required this.markers}) : super(key: key);
 
   @override
-  _CustomMapState createState() => _CustomMapState();
+  _MyMapState createState() => _MyMapState();
 }
 
-class _CustomMapState extends State<CustomMap> {
+class _MyMapState extends State<MyMap> {
   final Completer<GoogleMapController> _controller = Completer();
   final Location _location = Location();
   late GoogleMapController mapController;
@@ -68,6 +68,7 @@ class _CustomMapState extends State<CustomMap> {
           target: LatLng(0, 0),
           zoom: 10,
         ),
+        markers: widget.markers,
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
           mapController = controller;
@@ -78,3 +79,5 @@ class _CustomMapState extends State<CustomMap> {
     );
   }
 }
+
+

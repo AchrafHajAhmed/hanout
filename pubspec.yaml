@@ -69,6 +69,10 @@ dependencies:
     git:
       url: https://github.com/knottx/image_gallery_saver.git
       ref: knottx-latest
+  firebase_messaging: ^14.9.3
+  onesignal_flutter: ^5.2.0
+  pusher_beams: ^1.1.1
+  beamer: ^1.6.1
 
 
 dev_dependencies:

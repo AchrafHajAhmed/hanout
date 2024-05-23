@@ -110,26 +110,26 @@ class _CommercantAccountState extends State<CommercantAccount> {
         buildListTile(
           context,
           icon: Icons.manage_accounts_outlined,
-          title: 'Parametres',
+          title: 'Paramètres',
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => Parametre()));
           },
         ),
-        SizedBox(height: 10,),
+        SizedBox(height: 10),
         buildListTile(
           context,
           icon: Icons.info_outline,
           title: 'À propos',
           onTap: () {},
         ),
-        SizedBox(height: 10,),
+        SizedBox(height: 10),
         buildListTile(
           context,
           icon: Icons.help_outline,
           title: 'Aide et FAQ',
           onTap: () {},
         ),
-        SizedBox(height: 10,),
+        SizedBox(height: 10),
         buildListTile(
           context,
           icon: Icons.exit_to_app,

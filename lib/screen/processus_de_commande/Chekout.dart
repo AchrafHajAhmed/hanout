@@ -6,21 +6,21 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hanout/widget/elevated_button.dart';
 import 'package:hanout/color.dart';
 import 'paiement_done.dart';
-import 'package:hanout/screen/My_Account/Commande.dart';
 import 'order_item.dart';
-
 
 class TotalCostScreen extends StatefulWidget {
   final double totalAchat;
   final double livraison;
   final String paymentMethod;
-  final List<OrderItem> orderItems; // Fix the capitalization here
+  final List<OrderItem> orderItems;
+  final String commercantUid;
 
   TotalCostScreen({
     required this.totalAchat,
     required this.livraison,
     required this.paymentMethod,
-    required this.orderItems, // Fix the capitalization here
+    required this.orderItems,
+    required this.commercantUid,
   });
 
   @override
@@ -64,18 +64,15 @@ class _TotalCostScreenState extends State<TotalCostScreen> {
   }
 
   void onCardEntryCancel() {
-    // Handle card entry cancel event
   }
 
   Future<void> processPayment(String nonce) async {
     print("Nonce: $nonce");
-    // Process the payment using the nonce here
 
-    // After processing payment, save order to Firestore and navigate to Done page
     String orderId = await saveOrderToFirestore();
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => Commande(orderId: orderId)),
+      MaterialPageRoute(builder: (context) => Done()),
     );
   }
 
@@ -84,6 +81,7 @@ class _TotalCostScreenState extends State<TotalCostScreen> {
     if (userId != null) {
       DocumentReference orderRef = await FirebaseFirestore.instance.collection('orders').add({
         'userId': userId,
+        'commercantUid': widget.commercantUid,
         'totalCost': totalCout,
         'serviceFee': fraisService,
         'taxVAT': taxeTVA,
@@ -93,7 +91,7 @@ class _TotalCostScreenState extends State<TotalCostScreen> {
           'quantity': item.quantity,
           'price': item.price,
         }).toList(),
-        'merchantName': 'Merchant Name', // Replace with actual merchant name
+        'merchantName': 'Merchant Name',
         'status': 'waiting',
         'timestamp': FieldValue.serverTimestamp(),
       });
@@ -109,7 +107,7 @@ class _TotalCostScreenState extends State<TotalCostScreen> {
       String orderId = await saveOrderToFirestore();
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Commande(orderId: orderId)),
+        MaterialPageRoute(builder: (context) => Done()),
       );
     }
   }
@@ -127,7 +125,7 @@ class _TotalCostScreenState extends State<TotalCostScreen> {
           Center(
             child: Padding(
               padding: EdgeInsets.all(16.0),
-              child: Text('Checkout', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              child: Text('Paiement', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             ),
           ),
           Padding(
@@ -156,7 +154,7 @@ class _TotalCostScreenState extends State<TotalCostScreen> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(40.0),
         child: MyElevatedButton(
-          buttonText: 'Confirm',
+          buttonText: 'Confirmer',
           onPressed: handleConfirmButtonPressed,
         ),
       ),
@@ -182,3 +180,5 @@ class CostRow extends StatelessWidget {
     );
   }
 }
+
+

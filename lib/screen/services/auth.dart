@@ -67,7 +67,7 @@ class Auth {
       final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
       await addUserToFirestore(
         userCredential.user!.uid,
-        userCredential.user!.displayName ?? 'Facebook User',
+        userCredential.user!.displayName ?? 'Utilisateur Facebook',
         userCredential.user!.email ?? '',
       );
       return userCredential;
@@ -110,7 +110,7 @@ class Auth {
         'fiscalNumber': fiscalNumber,
         'idCardUrl': idCardUrl,
         'fiscalCardUrl': fiscalCardUrl,
-        'status': false, // Ajout du champ status avec la valeur false par défaut
+        'status': false,
       });
       return userCredential;
     } catch (e) {

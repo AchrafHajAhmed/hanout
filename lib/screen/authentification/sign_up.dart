@@ -8,6 +8,7 @@ import 'package:hanout/widget/elevated_button.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hanout/screen/authentification/log_in.dart';
+import 'package:hanout/screen/acceuil.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -31,13 +32,31 @@ class _SignUpState extends State<SignUp> {
   TextEditingController _merchantPasswordController = TextEditingController();
   TextEditingController _merchantConfirmPasswordController = TextEditingController();
 
-  // Image picking
   final ImagePicker _picker = ImagePicker();
   File? _idCardImage;
   File? _fiscalCardImage;
-
   bool _isLoading = false;
-  int _currentPage = 0;
+  int _currentPage = 0; bool? isChecked = false;
+
+  void _signInWithGoogle() async {
+    setState(() {
+      _isLoading = false;
+    });
+    try {
+      final userCredential = await _auth.signInWithGoogle();
+      if (userCredential != null) {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Connexion Google annulée')));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur lors de la connexion avec Google : $e')));
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   Future<void> _pickImages() async {
     final pickedIdCardImage = await _picker.pickImage(source: ImageSource.gallery);
@@ -86,15 +105,12 @@ class _SignUpState extends State<SignUp> {
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignIn()));
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sign-Up failed: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Inscription échouée : $e')));
       } finally {
         setState(() => _isLoading = false);
       }
     }
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -136,55 +152,157 @@ class _SignUpState extends State<SignUp> {
 
   Widget _buildUserForm() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Form(
-        key: _userFormKey,
-        child: Column(
-          children: <Widget>[
-            Text('Utilisateur', style: Theme.of(context).textTheme.headline5),
-            SizedBox(height: 20),
-            MyTextFormField(
-              controller: _userNameController,
-              hintText: 'Name',
-              validator: (input) => input != null && input.isNotEmpty ? null : 'Please enter a name',
-            ),
-            SizedBox(height: 20),
-            MyTextFormField(
-              controller: _userEmailController,
-              hintText: 'Email',
-              validator: (input) => input != null && input.isNotEmpty ? null : 'Please enter an email',
-            ),
-            SizedBox(height: 20),
-            MyTextFormField(
-              controller: _userPasswordController,
-              hintText: 'Password',
-              obscureText: true,
-              validator: (input) => input != null && input.length >= 6 ? null : 'Password must be at least 6 characters',
-            ),
-            SizedBox(height: 20),
-            MyTextFormField(
-              controller: _userConfirmPasswordController,
-              hintText: 'Confirm Password',
-              obscureText: true,
-              validator: (input) => input != null && input == _userPasswordController.text ? null : 'Passwords do not match',
-            ),
-            SizedBox(height: 20),
-            MyElevatedButton(
-              buttonText: 'Sign Up',
-              onPressed: () => _handleSignUp(false),
-            ),
-          ],
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _userFormKey,
+          child: Column(
+              children: <Widget>[
+                Text('Utilisateur', style: Theme.of(context).textTheme.headline5),
+                SizedBox(height: 20),
+                MyTextFormField(
+                  controller: _userNameController,
+                  hintText: 'Nom',
+                  validator: (input) => input != null && input.isNotEmpty ? null : 'Veuillez entrer un nom',
+                ),
+                SizedBox(height: 20),
+                MyTextFormField(
+                  controller: _userEmailController,
+                  hintText: 'Email',
+                  validator: (input) => input != null && input.isNotEmpty ? null : 'Veuillez entrer un email',
+                ),
+                SizedBox(height: 20),
+                MyTextFormField(
+                  controller: _userPasswordController,
+                  hintText: 'Mot de passe',
+                  obscureText: true,
+                  validator: (input) => input != null && input.length >= 6 ? null : 'Le mot de passe doit contenir au moins 6 caractères',
+                ),
+                SizedBox(height: 20),
+                MyTextFormField(
+                  controller: _userConfirmPasswordController,
+                  hintText: 'Confirmer le mot de passe',
+                  obscureText: true,
+                  validator: (input) => input != null && input == _userPasswordController.text ? null : 'Les mots de passe ne correspondent pas',
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Checkbox(
+                      value: isChecked,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          isChecked = value!;
+                        });
+                      },
+                      checkColor: Colors.white,
+                      activeColor: Colors.black,
+                    ),
+                    SizedBox(height: 20,),
+                    const Expanded(
+                      child: Text(
+                        'Oui, je veux recevoir des remises, des offres de fidélité et d\'autres mises à jour.',
+                        style: TextStyle(
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 25),
+                Text('OU',
+                    style: TextStyle(color: Color(0xFF757373),
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w900,
+                      fontSize: 16.0,
+                    ),
+                    textAlign: TextAlign.center),
+                SizedBox(height: 25),
+                const Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Divider(
+                        thickness: 1,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child:
 
-        ),
-      ),
-    );
+                        Text('S\'inscrire avec')),
+                    Expanded(
+                      child: Divider(
+                        thickness: 1,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        setState(() {
+                          _isLoading = false;
+                        });
+                        final userCredential = await _auth.signInWithFacebook();
+                        if (userCredential != null) {
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Connexion Facebook annulée ou échouée')));
+                        }
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      },
+                      child: Image.asset('assets/facebook.png', height: 50),
+                    ),
+                    const SizedBox(width: 10,),
+                    GestureDetector(
+                      onTap: () async {
+                        setState(() {
+                          _isLoading = false;
+                        });
+                        final userCredential = await _auth.signInWithGoogle();
+                        if (userCredential != null) {
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Connexion Google annulée ou échouée')));
+                        }
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      },
+                      child: Image.asset('assets/google.png', height: 50),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10,),
+                MyElevatedButton(
+                  buttonText: 'S\'inscrire',
+                  onPressed: () => _handleSignUp(false),
+                ),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Vous avez déjà un compte?'),
+                      MyTextButton(
+                        buttonText:'Connexion',
+                        onPressed: () {
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignIn()));
+                        },
+                      ),])
+              ]),
 
+        ));
   }
 
   Widget _buildMerchantForm() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
-      child: Form(
+      child:SafeArea(child:  Form(
         key: _merchantFormKey,
         child: Column(
           children: <Widget>[
@@ -192,58 +310,67 @@ class _SignUpState extends State<SignUp> {
             SizedBox(height: 20),
             MyTextFormField(
               controller: _merchantNameController,
-              hintText: 'Name',
-              validator: (input) => input != null && input.isNotEmpty ? null : 'Please enter a name',
+              hintText: 'Nom',
+              validator: (input) => input != null && input.isNotEmpty ? null : 'Veuillez entrer un nom',
             ),
             SizedBox(height: 20),
             MyTextFormField(
               controller: _merchantEmailController,
               hintText: 'Email',
-              validator: (input) => input != null && input.isNotEmpty ? null : 'Please enter an email',
+              validator: (input) => input != null && input.isNotEmpty ? null : 'Veuillez entrer un email',
             ),
             SizedBox(height: 20),
             MyTextFormField(
               controller: _merchantPhoneController,
-              hintText: 'Phone Number',
-              validator: (input) => input != null && input.isNotEmpty ? null : 'Please enter a phone number',
+              hintText: 'Numéro de téléphone',
+              validator: (input) => input != null && input.isNotEmpty ? null : 'Veuillez entrer un numéro de téléphone',
+              maxLength: 8,
             ),
             SizedBox(height: 20),
             MyTextFormField(
               controller: _merchantFiscalController,
-              hintText: 'Fiscal Number',
-              validator: (input) => input != null && input.isNotEmpty ? null : 'Please enter a fiscal number',
+              hintText: 'Numéro fiscal',
+              validator: (input) => input != null && input.isNotEmpty ? null : 'Veuillez entrer un numéro fiscal',
             ),
             SizedBox(height: 20),
             MyTextFormField(
               controller: _merchantPasswordController,
-              hintText: 'Password',
+              hintText: 'Mot de passe',
               obscureText: true,
-              validator: (input) => input != null && input.length >= 6 ? null : 'Password must be at least 6 characters',
+              validator: (input) => input != null && input.length >= 6 ? null : 'Le mot de passe doit contenir au moins 6 caractères',
             ),
             SizedBox(height: 20),
             MyTextFormField(
               controller: _merchantConfirmPasswordController,
-              hintText: 'Confirm Password',
+              hintText: 'Confirmer le mot de passe',
               obscureText: true,
-              validator: (input) => input != null && input == _merchantPasswordController.text ? null : 'Passwords do not match',
+              validator: (input) => input != null && input == _merchantPasswordController.text ? null : 'Les mots de passe ne correspondent pas',
             ),
             SizedBox(height: 20),
-            TextButton(
+            MyTextButton(
               onPressed: _pickImages,
-              child: Text('Upload ID and Fiscal Card'),
+              buttonText:'Télécharger la carte d\'identité et la carte fiscale',
             ),
             _idCardImage != null ? Text(_idCardImage!.path.split('/').last) : SizedBox(),
             _fiscalCardImage != null ? Text(_fiscalCardImage!.path.split('/').last) : SizedBox(),
             SizedBox(height: 20),
             MyElevatedButton(
-              buttonText: 'Sign Up',
+              buttonText: 'S\'inscrire',
               onPressed: () => _handleSignUp(true),
             ),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Vous avez déjà un compte?'),
+                  MyTextButton(
+                    buttonText:'Connexion',
+                    onPressed: () {
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignIn()));
+                    },
+                  ),])
           ],
         ),
       ),
-    );
+    ));
   }
-
 }
-

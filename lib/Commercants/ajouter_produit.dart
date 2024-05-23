@@ -52,43 +52,46 @@ class _AjouterProduitState extends State<AjouterProduit> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child:
-        Scaffold(
-       appBar: AppBar(
-        centerTitle: true,
-        title: Image.asset('assets/logo.png', height: 50),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: Column(
-        children: [
-          _buildTopBar(context),
-          _buildSearchBar(),
-          _buildCategoryFilter(),
-          _buildSubCategoryFilter(),
-          Expanded(
-            child: _buildProductList(),
-          ),
-       MyElevatedButton(
-            buttonText: 'Confirmer',
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ConfirmModifications(modifiedProducts: modifiedProducts)),
-              );
-              setState(() {
-                modifiedProducts.clear();
-              });
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Image.asset('assets/logo.png', height: 50),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
             },
           ),
-          SizedBox(height: 10,)
-        ],
+        ),
+        body: Column(
+          children: [
+            _buildTopBar(context),
+            _buildSearchBar(),
+            _buildCategoryFilter(),
+            _buildSubCategoryFilter(),
+            Expanded(
+              child: _buildProductList(),
+            ),
+            MyElevatedButton(
+              buttonText: 'Confirmer',
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ConfirmModifications(modifiedProducts: modifiedProducts)),
+                );
+                setState(() {
+                  modifiedProducts.clear();
+                });
+              },
+            ),
+            SizedBox(height: 10),
+          ],
+        ),
       ),
-    ));}
+    );
+  }
+
   Widget _buildSearchBar() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -130,7 +133,7 @@ class _AjouterProduitState extends State<AjouterProduit> {
     );
   }
 
-  Widget _buildCategoryFilter() {
+  Widget _buildSubCategoryFilter() {
     return Container(
       height: 40,
       child: ListView.builder(
@@ -155,7 +158,7 @@ class _AjouterProduitState extends State<AjouterProduit> {
     );
   }
 
-  Widget _buildSubCategoryFilter() {
+  Widget _buildCategoryFilter() {
     return Container(
       height: 40,
       child: ListView.builder(
@@ -198,13 +201,13 @@ class _AjouterProduitState extends State<AjouterProduit> {
       stream: query.snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
-          return Text('Something went wrong');
+          return Text('Une erreur s\'est produite');
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         }
         if (snapshot.data?.docs.isEmpty ?? true) {
-          return Center(child: Text('No products found'));
+          return Center(child: Text('Aucun produit trouvé'));
         }
         return ListView.separated(
           itemCount: snapshot.data!.docs.length,

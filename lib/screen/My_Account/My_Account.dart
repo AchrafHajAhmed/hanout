@@ -8,16 +8,6 @@ import 'package:hanout/screen/My_Account/Commande.dart';
 import 'package:hanout/screen/My_Account/Parametre.dart';
 import 'package:hanout/color.dart';
 
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hanout/screen/Favoris.dart';
-import 'package:hanout/screen/authentification/log_in.dart';
-import 'package:hanout/widget/bottom_navigation_bar.dart';
-import 'package:hanout/screen/My_Account/Commande.dart';
-import 'package:hanout/screen/My_Account/Parametre.dart';
-import 'package:hanout/color.dart';
-
 class MyAccount extends StatefulWidget {
   @override
   _MyAccountState createState() => _MyAccountState();
@@ -27,7 +17,6 @@ class _MyAccountState extends State<MyAccount> {
   String userEmail = '';
   String userName = '';
   bool isPaymentButtonClicked = false;
-  String orderId = 'example-order-id'; // Example order ID
 
   @override
   void initState() {
@@ -63,7 +52,7 @@ class _MyAccountState extends State<MyAccount> {
       ),
       body: buildUserInfo(),
       bottomNavigationBar: MyBottomNavigationBar(
-        currentIndex: 3,
+        currentIndex: 2,
         onItemSelected: (index) {},
       ),
     );
@@ -134,7 +123,7 @@ class _MyAccountState extends State<MyAccount> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => Commande(orderId: orderId), // Pass the orderId here
+                builder: (context) => Commande(),
               ),
             );
           },
@@ -162,6 +151,7 @@ class _MyAccountState extends State<MyAccount> {
           ),
           title: Text('Se déconnecter'),
           onTap: () {
+            FirebaseAuth.instance.signOut();
             Navigator.pushReplacement(
                 context, MaterialPageRoute(builder: (context) => SignIn()));
           },
@@ -190,6 +180,7 @@ class _MyAccountState extends State<MyAccount> {
     );
   }
 }
+
 
 
 

@@ -39,15 +39,14 @@ class MerchantRefusedPage extends StatelessWidget {
                         final picker = ImagePicker();
                         final pickedFile = await picker.pickImage(source: ImageSource.gallery);
                         if (pickedFile != null) {
-                          // Image sélectionnée, faire quelque chose avec elle
                           print('Chemin de l\'image sélectionnée : ${pickedFile.path}');
                         }
                       },
                     ),
                     Flexible(
                       child: Text(
-                        'Upload les photos de la carte CIN et du Matricule fiscale',
-                        overflow: TextOverflow.visible, // Permet au texte de déborder si nécessaire
+                        'Télécharger les photos de la carte CIN et du Matricule fiscale',
+                        overflow: TextOverflow.visible,
                       ),
                     ),
                   ],
@@ -85,7 +84,7 @@ class MerchantRefusedPage extends StatelessWidget {
             child: Align(
               alignment: Alignment.bottomCenter,
               child: MyElevatedButton(
-                buttonText: 'Confirm',
+                buttonText: 'Confirmer',
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
@@ -100,4 +99,3 @@ class MerchantRefusedPage extends StatelessWidget {
     );
   }
 }
-

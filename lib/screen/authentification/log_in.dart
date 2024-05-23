@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hanout/screen/acceuil.dart';
 import 'package:hanout/screen/authentification/sign_up.dart';
 import 'package:hanout/widget/text_form_field.dart';
 import 'package:hanout/widget/elevated_button.dart';
@@ -37,12 +36,9 @@ class _SignInState extends State<SignIn> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            if (_isLoading) ...[
-              Center(child: CircularProgressIndicator()),
-            ],
             SizedBox(height: 20),
             const Text(
-              'Sign In',
+              'Connexion',
               style: TextStyle(
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.w900,
@@ -63,14 +59,14 @@ class _SignInState extends State<SignIn> {
             Align(
               alignment: Alignment.centerLeft,
               child: MyTextButton(
-                buttonText: 'Forget Your Password?',
+                buttonText: 'Mot de passe oublié ?',
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => ResetPasswordPage()));
                 },
               ),
             ),
             Text(
-              'OR',
+              'OU',
               style: TextStyle(
                 color: Color(0xFF757373),
                 fontFamily: 'Roboto',
@@ -90,7 +86,7 @@ class _SignInState extends State<SignIn> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text('Sign In Using'),
+                  child: Text('Se connecter avec'),
                 ),
                 Expanded(
                   child: Divider(
@@ -114,7 +110,7 @@ class _SignInState extends State<SignIn> {
                       if (userCredential != null) {
                         await _redirectToProperPage();
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Facebook Sign-In cancelled or failed')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Connexion Facebook annulée ou échouée')));
                       }
                     } finally {
                       setState(() {
@@ -135,7 +131,7 @@ class _SignInState extends State<SignIn> {
                       if (userCredential != null) {
                         await _redirectToProperPage();
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Google Sign-In cancelled or failed')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Connexion Google annulée ou échouée')));
                       }
                     } finally {
                       setState(() {
@@ -149,7 +145,7 @@ class _SignInState extends State<SignIn> {
             ),
             SizedBox(height: 20),
             MyElevatedButton(
-              buttonText: 'Log In',
+              buttonText: 'Se connecter',
               onPressed: () async {
                 setState(() => _isLoading = true);
                 try {
@@ -159,7 +155,7 @@ class _SignInState extends State<SignIn> {
                   );
                   await _redirectToProperPage();
                 } on FirebaseAuthException catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur de connexion: ${e.message}')));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erreur de connexion : ${e.message}')));
                 } finally {
                   setState(() => _isLoading = false);
                 }
@@ -168,9 +164,9 @@ class _SignInState extends State<SignIn> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Need An Account? '),
+                Text('Besoin d\'un compte ? '),
                 MyTextButton(
-                  buttonText: 'Sign Up',
+                  buttonText: 'S\'inscrire',
                   onPressed: () {
                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignUp()));
                   },
@@ -205,6 +201,4 @@ class _SignInState extends State<SignIn> {
       }
     }
   }
-
-  }
-
+}

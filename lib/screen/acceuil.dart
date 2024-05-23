@@ -4,8 +4,7 @@ import 'package:hanout/screen/processus_de_commande/Panier.dart';
 import 'package:hanout/widget/bottom_navigation_bar.dart';
 import 'package:hanout/widget/map.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:hanout/screen/processus_de_commande/commercants_produit.dart';  // Import CommercantProduitsPage
+import 'package:hanout/screen/processus_de_commande/commercants_produit.dart';
 import 'package:hanout/screen/processus_de_commande/order_item.dart';
 import 'package:hanout/color.dart';
 
@@ -23,6 +22,7 @@ class _AcceuilState extends State<Acceuil> {
   Set<Marker> _markers = {};
   List<Map<String, dynamic>> _commercants = [];
   List<OrderItem> _cartItems = [];
+  String? _selectedCommercantUid;
 
   @override
   void initState() {
@@ -32,28 +32,19 @@ class _AcceuilState extends State<Acceuil> {
   }
 
   void fetchCommercants() async {
-    // Fetch commercants from Firestore
-    print('Fetching commercants...');
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('commercants').get();
-    print('Total commercants fetched: ${querySnapshot.docs.length}');
     Set<Marker> markers = {};
     List<Map<String, dynamic>> commercants = [];
 
     for (var doc in querySnapshot.docs) {
       Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
-      if (data == null) {
-        print('Data is null for doc id: ${doc.id}');
-        continue;
-      }
+      if (data == null) continue;
 
-      double? latitude = double.tryParse(data['latitude'] ?? '');
-      double? longitude = double.tryParse(data['longitude'] ?? '');
+      double? latitude = double.tryParse(data['latitude']?.toString() ?? '');
+      double? longitude = double.tryParse(data['longitude']?.toString() ?? '');
       String? name = data['name'];
 
-      if (latitude == null || longitude == null || name == null) {
-        print('Missing or invalid latitude/longitude/name for doc id: ${doc.id}');
-        continue;
-      }
+      if (latitude == null || longitude == null || name == null) continue;
 
       QuerySnapshot productSnapshot = await FirebaseFirestore.instance
           .collection('produitdisponible')
@@ -63,8 +54,6 @@ class _AcceuilState extends State<Acceuil> {
         var productData = doc.data() as Map<String, dynamic>?;
         return productData?['name'] ?? '';
       }).join(', ');
-
-      print('Commercant: $name, Products: $products, Latitude: $latitude, Longitude: $longitude');
 
       markers.add(
         Marker(
@@ -86,15 +75,10 @@ class _AcceuilState extends State<Acceuil> {
       });
     }
 
-    print('Total markers: ${markers.length}');
-    print('Total commercants: ${commercants.length}');
-
     setState(() {
       _markers = markers;
       _commercants = commercants;
     });
-
-    print('State updated. Total markers: ${_markers.length}, Total commercants: ${_commercants.length}');
   }
 
   void _addToCart(OrderItem item) {
@@ -109,19 +93,6 @@ class _AcceuilState extends State<Acceuil> {
       appBar: AppBar(
         centerTitle: true,
         title: Image.asset('assets/logo.png', height: 50),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.shopping_cart),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Panier(orderItems: _cartItems),
-                ),
-              );
-            },
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -129,16 +100,31 @@ class _AcceuilState extends State<Acceuil> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    _cityName,
-                    style: TextStyle(
-                      fontFamily: 'Roboto',
-                      fontSize: 20,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        _cityName,
+                        style: TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: 20,
+                        ),
+                      ),
+                      Icon(Icons.arrow_drop_down,),
+                    ],
                   ),
-                  Icon(Icons.arrow_drop_down),
+                  IconButton(
+                    icon: Icon(Icons.shopping_cart, size:25,),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Panier(orderItems: _cartItems, commercantUid: _selectedCommercantUid ?? ''),
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
@@ -146,7 +132,7 @@ class _AcceuilState extends State<Acceuil> {
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                 decoration: InputDecoration(
-                  hintText: 'Recherche produits, superettes, commercants',
+                  hintText: 'Recherche produits, superettes, commerçants',
                   prefixIcon: Icon(Icons.search),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8.0),
@@ -154,39 +140,45 @@ class _AcceuilState extends State<Acceuil> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton.icon(
-                    icon: Icon(Icons.filter_list),
-                    label: Text('Trier'),
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
-                  ),
-                  SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: Text('La plus proche'),
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
-                  ),
-                  SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: Text('Notes'),
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
-                  ),
-                  SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: Text('Ouvrir'),
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
-                  ),
-                ],
+            Container(
+              height: 50,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    ElevatedButton.icon(
+                      icon: Icon(Icons.filter_list),
+                      label: Text('Trier'),
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
+                    ),
+                    SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: Text('La plus proche'),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
+                    ),
+                    SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: Text('Notes'),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
+                    ),
+                    SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: Text('Ouvrir'),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.yellow),
+                    ),
+                  ],
+                ),
               ),
             ),
-            //CustomMap(), // Uncomment this if you have a CustomMap widget
+            MyMap(
+              height: MediaQuery.of(context).size.height * 1 / 5,
+              screenWidth: MediaQuery.of(context).size.width,
+              markers: _markers,
+            ),
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
@@ -205,6 +197,9 @@ class _AcceuilState extends State<Acceuil> {
                     ],
                   ),
                   onTap: () {
+                    setState(() {
+                      _selectedCommercantUid = commercant['id'];
+                    });
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -219,9 +214,6 @@ class _AcceuilState extends State<Acceuil> {
                 );
               },
             ),
-
-
-
           ],
         ),
       ),
@@ -232,3 +224,7 @@ class _AcceuilState extends State<Acceuil> {
     );
   }
 }
+
+
+
+

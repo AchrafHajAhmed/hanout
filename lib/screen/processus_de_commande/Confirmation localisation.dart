@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:hanout/screen/processus_de_commande/calcul distance.dart';
 import 'package:hanout/widget/elevated_button.dart';
-
-import '../../widget/map.dart';
-
+import 'package:hanout/widget/map.dart';
+import 'package:hanout/screen/processus_de_commande/calcul distance.dart';
 
 class ConfirmationLocalisation extends StatefulWidget {
   @override
@@ -46,13 +44,10 @@ class _ConfirmationLocalisationState extends State<ConfirmationLocalisation> {
       ),
       body: Column(
         children: [
-          if (_isLoading)
-            Expanded(child: Center(child: CircularProgressIndicator()))
-          else
             Column(
               children: [
                 Text(
-                  'Confirmation Address',
+                  'confirmation d\'adresse',
                   style: TextStyle(
                     fontFamily: 'Roboto',
                     fontWeight: FontWeight.w900,
@@ -60,9 +55,23 @@ class _ConfirmationLocalisationState extends State<ConfirmationLocalisation> {
                   ),
                 ),
                 SizedBox(height: 20),
-                TextField(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Entrez votre adresse',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
                 SizedBox(height: 5),
-                CustomMap (height: MediaQuery.of(context).size.height * 3 / 5, screenWidth: MediaQuery.of(context).size.width), // Updated
+                MyMap(
+                  height: MediaQuery.of(context).size.height * 3 / 5,
+                  screenWidth: MediaQuery.of(context).size.width,
+                  markers: {},
+                ),
               ],
             ),
         ],
@@ -73,12 +82,12 @@ class _ConfirmationLocalisationState extends State<ConfirmationLocalisation> {
         child: MyElevatedButton(
           buttonText: 'Confirm',
           onPressed: () {
-            if (_distanceCalculator != null) {
+            if (_distanceCalculator != null && _distanceCalculator!.marchands.isNotEmpty) {
               double deliveryCost = _distanceCalculator!.calculateCost(
-                  _distanceCalculator!.calculateDistance(
-                    _distanceCalculator!.marchands[0]['latitude'],
-                    _distanceCalculator!.marchands[0]['longitude'],
-                  )
+                _distanceCalculator!.calculateDistance(
+                  _distanceCalculator!.marchands[0]['latitude'],
+                  _distanceCalculator!.marchands[0]['longitude'],
+                ),
               );
               Navigator.pop(context, deliveryCost);
             }
@@ -88,6 +97,10 @@ class _ConfirmationLocalisationState extends State<ConfirmationLocalisation> {
     );
   }
 }
+
+
+
+
 
 
 

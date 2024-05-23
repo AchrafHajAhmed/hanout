@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hanout/screen//services/auth.dart';
-import'package:hanout/widget/text_form_field.dart';
+import 'package:hanout/widget/text_form_field.dart';
 import 'package:hanout/widget/elevated_button.dart';
 
 class ResetPasswordPage extends StatelessWidget {
@@ -14,8 +14,10 @@ class ResetPasswordPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Image.asset('assets/logo.png',
-          height: 50,),
+        title: Image.asset(
+          'assets/logo.png',
+          height: 50,
+        ),
       ),
       body: Center(
         child: Padding(
@@ -25,21 +27,24 @@ class ResetPasswordPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text (
-                'Reset Passwrod',
-                style:  TextStyle(
+              Text(
+                'Réinitialiser le mot de passe',
+                style: TextStyle(
                   fontFamily: 'Roboto',
                   fontWeight: FontWeight.w900,
                   fontSize: 32.0,
                 ),
               ),
-              SizedBox(height: 30,),
+              SizedBox(height: 30),
               MyTextFormField(
-                hintText: 'Email',
+                hintText: 'Adresse e-mail',
                 controller: _emailController,
               ),
               SizedBox(height: 20),
-              MyElevatedButton(buttonText: 'Reset Password', onPressed: () => _resetPassword(context),),
+              MyElevatedButton(
+                buttonText: 'Réinitialiser le mot de passe',
+                onPressed: () => _resetPassword(context),
+              ),
             ],
           ),
         ),
@@ -50,14 +55,28 @@ class ResetPasswordPage extends StatelessWidget {
   void _resetPassword(BuildContext context) async {
     var email = _emailController.text.trim();
     if (email.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Veuillez entrer un email.")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Veuillez entrer une adresse e-mail."),
+        ),
+      );
       return;
     }
     try {
       await _auth.sendPasswordResetEmail(email);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Lien de réinitialisation envoyé à $email")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              "Lien de réinitialisation envoyé à $email"),
+        ),
+      );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Erreur lors de l'envoi de l'email : ${e.toString()}")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              "Erreur lors de l'envoi de l'e-mail : ${e.toString()}"),
+        ),
+      );
     }
   }
 }

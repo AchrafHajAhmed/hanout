@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:hanout/color.dart';
-import 'package:hanout/screen/processus_de_commande/Chekout.dart'; // Ensure the path is correct
+import 'package:hanout/screen/processus_de_commande/Chekout.dart';
 import 'package:hanout/widget/elevated_button.dart';
 import 'order_item.dart';
+
 
 class MethodeDePaiement extends StatefulWidget {
   final String orderId;
   final double totalAchat;
   final double livraison;
-  final List<OrderItem> orderItems; // Add orderItems parameter
+  final List<OrderItem> orderItems;
+  final String commercantUid;
 
   MethodeDePaiement({
     Key? key,
     required this.orderId,
     required this.totalAchat,
     required this.livraison,
-    required this.orderItems, // Initialize orderItems
+    required this.orderItems,
+    required this.commercantUid,
   }) : super(key: key);
 
   @override
@@ -79,7 +82,7 @@ class _MethodeDePaiementState extends State<MethodeDePaiement> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(40.0),
         child: MyElevatedButton(
-          buttonText: 'Confirm',
+          buttonText: 'Confirmer',
           onPressed: () {
             Navigator.push(
               context,
@@ -89,6 +92,7 @@ class _MethodeDePaiementState extends State<MethodeDePaiement> {
                   livraison: widget.livraison,
                   paymentMethod: _paymentMethod,
                   orderItems: widget.orderItems,
+                  commercantUid: widget.commercantUid,
                 ),
               ),
             );
@@ -98,4 +102,5 @@ class _MethodeDePaiementState extends State<MethodeDePaiement> {
     );
   }
 }
+
 

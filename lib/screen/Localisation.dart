@@ -25,7 +25,7 @@ class _LocalisationState extends State<Localisation> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unable to retrieve city name. Please try again.')),
+        SnackBar(content: Text('Impossible de récupérer le nom de la ville. Veuillez réessayer.')),
       );
     }
   }
@@ -34,7 +34,7 @@ class _LocalisationState extends State<Localisation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Address'),
+        title: Text('Ajouter une adresse'),
         actions: <Widget>[
           TextButton(
             onPressed: () {
@@ -44,7 +44,7 @@ class _LocalisationState extends State<Localisation> {
               );
             },
             child: Text(
-              'Skip',
+              'Ignorer',
               style: TextStyle(color: AppColors.secondaryColor),
             ),
           ),
@@ -57,7 +57,7 @@ class _LocalisationState extends State<Localisation> {
             child: TextField(
               controller: _addressController,
               decoration: InputDecoration(
-                hintText: 'Enter your address',
+                hintText: 'Entrez votre adresse',
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -65,13 +65,14 @@ class _LocalisationState extends State<Localisation> {
               ),
             ),
           ),
-          CustomMap(
+          MyMap(
             height: MediaQuery.of(context).size.height * 3 / 5,
             screenWidth: MediaQuery.of(context).size.width,
+            markers: {},
           ),
           SizedBox(height: 20),
           MyElevatedButton(
-            buttonText: 'Save Address',
+            buttonText: 'Enregistrer l\'adresse',
             onPressed: _saveAddress,
           ),
         ],
@@ -84,12 +85,14 @@ Future<String?> getCityFromUserLocation() async {
   try {
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
-    String cityName = placemarks.first.locality ?? 'Unknown';
+    String cityName = placemarks.first.locality ?? 'Inconnu';
     return cityName;
   } catch (e) {
     print('Error retrieving user location: $e');
     return null;
   }
 }
+
+
 
 

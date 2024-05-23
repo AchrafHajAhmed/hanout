@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hanout/color.dart';
 import 'package:hanout/screen/Favoris.dart';
 import 'package:hanout/screen/My_Account/My_Account.dart';
-import 'package:hanout/screen/Recherche.dart';
 import 'package:hanout/screen/acceuil.dart';
+
 
 class MyBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
@@ -23,12 +23,9 @@ class MyBottomNavigationBar extends StatelessWidget {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Acceuil()));
         break;
       case 1:
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Search()));
-        break;
-      case 2:
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Favori()));
         break;
-      case 3:
+      case 2:
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyAccount()));
         break;
       default:
@@ -48,22 +45,18 @@ class MyBottomNavigationBar extends StatelessWidget {
         ),
       ),
       child: BottomNavigationBar(
-        backgroundColor: AppColors.primaryColor,
+        backgroundColor: Colors.white,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home, color: currentIndex == 0 ? AppColors.primaryColor : AppColors.thirdColor),
             label: 'Accueil',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search, color: currentIndex == 1 ? AppColors.primaryColor : AppColors.thirdColor),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_outline, color: currentIndex == 2 ? AppColors.primaryColor : AppColors.thirdColor),
+            icon: Icon(Icons.favorite_outline, color: currentIndex == 1 ? AppColors.primaryColor : AppColors.thirdColor),
             label: 'Favoris',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle_outlined, color: currentIndex == 3 ? AppColors.primaryColor : AppColors.thirdColor),
+            icon: Icon(Icons.account_circle_outlined, color: currentIndex == 2 ? AppColors.primaryColor : AppColors.thirdColor),
             label: 'Mon compte',
           ),
         ],
@@ -75,3 +68,4 @@ class MyBottomNavigationBar extends StatelessWidget {
     );
   }
 }
+

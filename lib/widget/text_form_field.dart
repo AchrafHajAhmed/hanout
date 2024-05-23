@@ -8,6 +8,7 @@ class MyTextFormField extends StatefulWidget {
   final ValueChanged<String?>? onSaved;
   final bool obscureText;
   final List<TextInputFormatter>? inputFormatters;
+  final int maxLength;
 
 
   const MyTextFormField({
@@ -18,6 +19,7 @@ class MyTextFormField extends StatefulWidget {
     this.inputFormatters,
     this.onSaved,
     this.obscureText = false,
+    this.maxLength = 8,
   }) : super(key: key);
 
   @override

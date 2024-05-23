@@ -60,3 +60,4 @@ class MerchantVerificationPage extends StatelessWidget {
     );
   }
 }
+

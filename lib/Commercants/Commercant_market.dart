@@ -28,7 +28,7 @@ class _CommercantsMarketState extends State<CommercantsMarket> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Image.asset('assets/logo.png', height: 50), // Remplacer par le chemin de votre logo
+        title: Image.asset('assets/logo.png', height: 50),
       ),
       body: Column(
         children: [
@@ -38,7 +38,7 @@ class _CommercantsMarketState extends State<CommercantsMarket> {
               stream: FirebaseFirestore.instance.collection('produitdisponible').where('uid', isEqualTo: commercantUid).snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
-                  return Center(child: Text('Something went wrong'));
+                  return Center(child: Text('Une erreur s\'est produite.'));
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
@@ -48,9 +48,9 @@ class _CommercantsMarketState extends State<CommercantsMarket> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SvgPicture.asset('assets/Market.svg', height: 202), // Remplacer par le chemin de votre SVG
+                        SvgPicture.asset('assets/Market.svg', height: 202),
                         SizedBox(height: 20),
-                        Text('Your market is empty', style: TextStyle(fontSize: 18)),
+                        Text('Votre marché est vide', style: TextStyle(fontSize: 18)),
                       ],
                     ),
                   );
@@ -130,9 +130,9 @@ class _CommercantsMarketState extends State<CommercantsMarket> {
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) => AjouterProduit()));
         },
-        backgroundColor: Colors.yellow, // Mettre le bouton en jaune
-        shape: CircleBorder(), // Le rendre circulaire
-        child: Icon(Icons.add, color: Colors.black), // Ajouter une icône noire pour contraste
+        backgroundColor: Colors.yellow,
+        shape: CircleBorder(),
+        child: Icon(Icons.add, color: Colors.black),
       ),
       bottomNavigationBar: CommercantsBottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -151,7 +151,7 @@ class _CommercantsMarketState extends State<CommercantsMarket> {
           SvgPicture.asset('assets/Market.svg', height: 60),
           SizedBox(width: 10),
           Text(
-            'Produit',
+            'Produits',
             style: TextStyle(
               fontWeight: FontWeight.w900,
               fontSize: 24.0,
