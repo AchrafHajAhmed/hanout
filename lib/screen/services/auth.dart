@@ -4,12 +4,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class Auth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   Future<String> uploadImage(File image, String path) async {
     final int maxFileSize = 5 * 1024 * 1024;
@@ -24,11 +26,15 @@ class Auth {
   }
 
   Future<void> addUserToFirestore(String userId, String name, String email) async {
-    await _firestore.collection('users').doc(userId).set({
-      'uid': userId,
-      'name': name,
-      'email': email,
-    });
+    String? token = await _firebaseMessaging.getToken();
+    if (token != null) {
+      await _firestore.collection('users').doc(userId).set({
+        'uid': userId,
+        'name': name,
+        'email': email,
+        'token': token,
+      });
+    }
   }
 
   Future<UserCredential> signInWithEmailAndPassword(String email, String password) async {
@@ -44,11 +50,13 @@ class Auth {
         idToken: googleAuth.idToken,
       );
       final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
-      await addUserToFirestore(
-        userCredential.user!.uid,
-        userCredential.user!.displayName ?? '',
-        userCredential.user!.email ?? '',
-      );
+      if (userCredential.user != null) {
+        await addUserToFirestore(
+          userCredential.user!.uid,
+          userCredential.user!.displayName ?? '',
+          userCredential.user!.email ?? '',
+        );
+      }
       return userCredential;
     }
     return null;
@@ -65,11 +73,13 @@ class Auth {
       final AccessToken accessToken = loginResult.accessToken!;
       final AuthCredential credential = FacebookAuthProvider.credential(accessToken.token);
       final UserCredential userCredential = await _firebaseAuth.signInWithCredential(credential);
-      await addUserToFirestore(
-        userCredential.user!.uid,
-        userCredential.user!.displayName ?? 'Utilisateur Facebook',
-        userCredential.user!.email ?? '',
-      );
+      if (userCredential.user != null) {
+        await addUserToFirestore(
+          userCredential.user!.uid,
+          userCredential.user!.displayName ?? 'Utilisateur Facebook',
+          userCredential.user!.email ?? '',
+        );
+      }
       return userCredential;
     }
     return null;
@@ -90,7 +100,9 @@ class Auth {
         email: email,
         password: password,
       );
-      await addUserToFirestore(userCredential.user!.uid, '', email);
+      if (userCredential.user != null) {
+        await addUserToFirestore(userCredential.user!.uid, '', email);
+      }
       return userCredential;
     } catch (e) {
       throw Exception('Échec de la création de l\'utilisateur: $e');
@@ -102,20 +114,26 @@ class Auth {
     try {
       String idCardUrl = await uploadImage(idCardImage, 'id_cards/${userCredential.user!.uid}');
       String fiscalCardUrl = await uploadImage(fiscalCardImage, 'fiscal_cards/${userCredential.user!.uid}');
-      await _firestore.collection('commercants').doc(userCredential.user!.uid).set({
-        'uid': userCredential.user!.uid,
-        'name': name,
-        'email': email,
-        'phone': phoneNumber,
-        'fiscalNumber': fiscalNumber,
-        'idCardUrl': idCardUrl,
-        'fiscalCardUrl': fiscalCardUrl,
-        'status': false,
-      });
+      if (userCredential.user != null) {
+        await _firestore.collection('commercants').doc(userCredential.user!.uid).set({
+          'uid': userCredential.user!.uid,
+          'name': name,
+          'email': email,
+          'phone': phoneNumber,
+          'fiscalNumber': fiscalNumber,
+          'idCardUrl': idCardUrl,
+          'fiscalCardUrl': fiscalCardUrl,
+          'status': false,
+        });
+      }
       return userCredential;
     } catch (e) {
-      await userCredential.user!.delete();
+      if (userCredential.user != null) {
+        await userCredential.user!.delete();
+      }
       throw Exception('Échec de la création du commerçant: $e');
     }
   }
 }
+
+

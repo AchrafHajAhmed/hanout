@@ -15,7 +15,7 @@ xmlns:tools="http://schemas.android.com/tools">
     <application
         android:label="hanout"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBrKSc877enAdKG4gqVukkcIwmZieRKmc0"/>
         <activity
