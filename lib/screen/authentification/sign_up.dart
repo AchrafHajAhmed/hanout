@@ -301,76 +301,76 @@ class _SignUpState extends State<SignUp> {
 
   Widget _buildMerchantForm() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child:SafeArea(child:  Form(
-        key: _merchantFormKey,
-        child: Column(
-          children: <Widget>[
-            Text('Commerçant', style: Theme.of(context).textTheme.headline5),
-            SizedBox(height: 20),
-            MyTextFormField(
-              controller: _merchantNameController,
-              hintText: 'Nom',
-              validator: (input) => input != null && input.isNotEmpty ? null : 'Veuillez entrer un nom',
-            ),
-            SizedBox(height: 20),
-            MyTextFormField(
-              controller: _merchantEmailController,
-              hintText: 'Email',
-              validator: (input) => input != null && input.isNotEmpty ? null : 'Veuillez entrer un email',
-            ),
-            SizedBox(height: 20),
-            MyTextFormField(
-              controller: _merchantPhoneController,
-              hintText: 'Numéro de téléphone',
-              validator: (input) => input != null && input.isNotEmpty ? null : 'Veuillez entrer un numéro de téléphone',
-              maxLength: 8,
-            ),
-            SizedBox(height: 20),
-            MyTextFormField(
-              controller: _merchantFiscalController,
-              hintText: 'Numéro fiscal',
-              validator: (input) => input != null && input.isNotEmpty ? null : 'Veuillez entrer un numéro fiscal',
-            ),
-            SizedBox(height: 20),
-            MyTextFormField(
-              controller: _merchantPasswordController,
-              hintText: 'Mot de passe',
-              obscureText: true,
-              validator: (input) => input != null && input.length >= 6 ? null : 'Le mot de passe doit contenir au moins 6 caractères',
-            ),
-            SizedBox(height: 20),
-            MyTextFormField(
-              controller: _merchantConfirmPasswordController,
-              hintText: 'Confirmer le mot de passe',
-              obscureText: true,
-              validator: (input) => input != null && input == _merchantPasswordController.text ? null : 'Les mots de passe ne correspondent pas',
-            ),
-            SizedBox(height: 20),
-            MyTextButton(
-              onPressed: _pickImages,
-              buttonText:'Télécharger la carte d\'identité et la carte fiscale',
-            ),
-            _idCardImage != null ? Text(_idCardImage!.path.split('/').last) : SizedBox(),
-            _fiscalCardImage != null ? Text(_fiscalCardImage!.path.split('/').last) : SizedBox(),
-            SizedBox(height: 20),
-            MyElevatedButton(
-              buttonText: 'S\'inscrire',
-              onPressed: () => _handleSignUp(true),
-            ),
-            Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Vous avez déjà un compte?'),
-                  MyTextButton(
-                    buttonText:'Connexion',
-                    onPressed: () {
-                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignIn()));
-                    },
-                  ),])
-          ],
+        padding: const EdgeInsets.all(16.0),
+        child:SafeArea(child:  Form(
+          key: _merchantFormKey,
+          child: Column(
+            children: <Widget>[
+              Text('Commerçant', style: Theme.of(context).textTheme.headline5),
+              SizedBox(height: 20),
+              MyTextFormField(
+                controller: _merchantNameController,
+                hintText: 'Nom',
+                validator: (input) => input != null && input.isNotEmpty ? null : 'Veuillez entrer un nom',
+              ),
+              SizedBox(height: 20),
+              MyTextFormField(
+                controller: _merchantEmailController,
+                hintText: 'Email',
+                validator: (input) => input != null && input.isNotEmpty ? null : 'Veuillez entrer un email',
+              ),
+              SizedBox(height: 20),
+              MyTextFormField(
+                controller: _merchantPhoneController,
+                hintText: 'Numéro de téléphone',
+                validator: (input) => input != null && input.isNotEmpty ? null : 'Veuillez entrer un numéro de téléphone',
+                maxLength: 8,
+              ),
+              SizedBox(height: 20),
+              MyTextFormField(
+                controller: _merchantFiscalController,
+                hintText: 'Numéro fiscal',
+                validator: (input) => input != null && input.isNotEmpty ? null : 'Veuillez entrer un numéro fiscal',
+              ),
+              SizedBox(height: 20),
+              MyTextFormField(
+                controller: _merchantPasswordController,
+                hintText: 'Mot de passe',
+                obscureText: true,
+                validator: (input) => input != null && input.length >= 6 ? null : 'Le mot de passe doit contenir au moins 6 caractères',
+              ),
+              SizedBox(height: 20),
+              MyTextFormField(
+                controller: _merchantConfirmPasswordController,
+                hintText: 'Confirmer le mot de passe',
+                obscureText: true,
+                validator: (input) => input != null && input == _merchantPasswordController.text ? null : 'Les mots de passe ne correspondent pas',
+              ),
+              SizedBox(height: 20),
+              MyTextButton(
+                onPressed: _pickImages,
+                buttonText:'Télécharger la carte d\'identité et la carte fiscale',
+              ),
+              _idCardImage != null ? Text(_idCardImage!.path.split('/').last) : SizedBox(),
+              _fiscalCardImage != null ? Text(_fiscalCardImage!.path.split('/').last) : SizedBox(),
+              SizedBox(height: 20),
+              MyElevatedButton(
+                buttonText: 'S\'inscrire',
+                onPressed: () => _handleSignUp(true),
+              ),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Vous avez déjà un compte?'),
+                    MyTextButton(
+                      buttonText:'Connexion',
+                      onPressed: () {
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignIn()));
+                      },
+                    ),])
+            ],
+          ),
         ),
-      ),
-    ));
+        ));
   }
 }
